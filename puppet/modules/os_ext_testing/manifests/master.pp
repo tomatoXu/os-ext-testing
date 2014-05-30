@@ -21,7 +21,9 @@ class os_ext_testing::master (
   $upstream_gerrit_ssh_private_key = '',
   $upstream_gerrit_host_pub_key = '',
   $git_email = 'testing@myvendor.com',
-  $git_name = 'MyVendor Jenkins'
+  $git_name = 'MyVendor Jenkins',
+  $mysql_root_password = '',
+  $mysql_password = '',
 ) {
   include os_ext_testing::base
   include apache
@@ -272,5 +274,44 @@ class os_ext_testing::master (
     source  => 'puppet:///modules/openstack_project/zuul/scoreboard.html',
     require => File['/var/lib/recheckwatch'],
   }
+
+  class { '::nodepool':
+    mysql_root_password      => $mysql_root_password,
+    mysql_password           => $mysql_password,
+    nodepool_ssh_private_key => $nodepool_ssh_private_key,
+    environment              => {
+      'NODEPOOL_SSH_KEY'     => $jenkins_ssh_public_key,
+    }
+  }
+
+  file { '/etc/nodepool/nodepool.yaml':
+    ensure  => present,
+    owner   => 'root',
+#    group   => 'root',
+    group   => 'sudo',
+#    mode    => '0400',
+    mode    => '6600',
+#    content => template("openstack_project/nodepool/${nodepool_template}"),
+    content => template("os_ext_testing/nodepool/nodepool.yaml.erb"),
+#    content => template('os_ext_testing/jenkins_job_builder/config/macros.yaml.erb'),
+#    source  => 'puppet:///modules/os_ext_testing/nodepool/nodepool.yaml',
+    require => [
+      File['/etc/nodepool'],
+      User['nodepool'],
+    ],
+  }
+
+  file { '/etc/nodepool/scripts':
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    recurse => true,
+    purge   => true,
+    force   => true,
+    require => File['/etc/nodepool'],
+    source  => 'puppet:///modules/openstack_project/nodepool/scripts',
+  }
+
 }
 

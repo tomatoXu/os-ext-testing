@@ -1,0 +1,47 @@
+script-dir: /home/stack/config/modules/openstack_project/files/nodepool/scripts
+
+dburi: 'mysql://nodepool:mysqlpw@localhost/nodepool'
+
+cron:
+  check: '*/15 * * * *'
+  cleanup: '*/1 * * * *'
+  update-image: '14 2 * * *'
+
+zmq-publishers:
+  - tcp://localhost:8881
+
+labels:
+# 3PAR hostnames are limited to 23 characters.
+# Nodepool uses the <labelname>-<provider>-<number> format
+# Having the <number> within the 23 characters is important
+# to associate exported volumes with the jenkins job.
+# In the future, this may increase to 31 characters which is
+# the new limit.
+  - name: d-p-c
+    image: d-p-c
+    min-ready: 3
+    providers:
+      - name: local
+
+providers:
+  - name: local
+    username: 'admin'
+    password: 'hpinvent'
+    auth-url: 'http://10.50.132.1:5000/v2.0'
+    project-id: 'admin'
+    max-servers: 6
+    keypair: 'devstack'
+    images:
+      - name: d-p-c
+        base-image: 'Ubuntu 12.04 Server (Precise)'
+        min-ram: 8192
+        setup: prepare_node_devstack.sh
+        private-key: '/home/stack/.ssh/id_rsa'
+
+targets:
+  - name: local-jenkins
+    jenkins:
+      url: http://10.50.132.1:8080/
+      user: jenkins
+      apikey: d74701fe98b3238dc2560fb7c8a5e135
+      credentials-id: f1d0dfc0-2435-4f6b-8f5c-4e9f3986fadc
