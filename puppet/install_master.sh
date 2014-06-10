@@ -8,9 +8,9 @@ set -e
 THIS_DIR=`pwd`
 
 DATA_REPO_INFO_FILE=$THIS_DIR/.data_repo_info
-DATA_PATH=$THIS_DIR/data
+DATA_PATH=$THIS_DIR/os-ext-testing-data
 OSEXT_PATH=$THIS_DIR/os-ext-testing
-OSEXT_REPO=https://github.com/jaypipes/os-ext-testing
+OSEXT_REPO=https://github.com/rasselin/os-ext-testing
 PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/config/modules:/etc/puppet/modules"
 
 # Install Puppet and the OpenStack Infra Config source tree
@@ -114,8 +114,13 @@ fi
 APACHE_SSL_CERT_FILE=`cat $APACHE_SSL_ROOT_DIR/new.cert.cert`
 APACHE_SSL_KEY_FILE=`cat $APACHE_SSL_ROOT_DIR/new.cert.key`
 
+if [[ -z $UPSTREAM_GERRIT_SERVER ]]; then
+    $UPSTREAM_GERRIT_SERVER="review.openstack.org"
+fi
+
 CLASS_ARGS="jenkins_ssh_public_key => '$JENKINS_SSH_PUBLIC_KEY_CONTENTS', jenkins_ssh_private_key => '$JENKINS_SSH_PRIVATE_KEY_CONTENTS', "
 CLASS_ARGS="$CLASS_ARGS ssl_cert_file_contents => '$APACHE_SSL_CERT_FILE', ssl_key_file_contents => '$APACHE_SSL_KEY_FILE', "
+CLASS_ARGS="$CLASS_ARGS upstream_gerrit_server => '$UPSTREAM_GERRIT_SERVER', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_user => '$UPSTREAM_GERRIT_USER', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_private_key => '$UPSTREAM_GERRIT_SSH_PRIVATE_KEY_CONTENTS', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_host_pub_key => '$UPSTREAM_GERRIT_HOST_PUB_KEY', "
@@ -123,6 +128,18 @@ CLASS_ARGS="$CLASS_ARGS git_email => '$GIT_EMAIL', git_name => '$GIT_NAME', "
 CLASS_ARGS="$CLASS_ARGS publish_host => '$PUBLISH_HOST', "
 CLASS_ARGS="$CLASS_ARGS data_repo_dir => '$DATA_PATH', "
 CLASS_ARGS="$CLASS_ARGS url_pattern => '$URL_PATTERN', "
+CLASS_ARGS="$CLASS_ARGS mysql_root_password => '$MYSQL_ROOT_PASSWORD', "
+CLASS_ARGS="$CLASS_ARGS mysql_password => '$MYSQL_PASSWORD', "
+CLASS_ARGS="$CLASS_ARGS local_username => '$LOCAL_USERNAME', "
+CLASS_ARGS="$CLASS_ARGS local_password => '$LOCAL_PASSWORD', "
+CLASS_ARGS="$CLASS_ARGS local_01_ip => '$LOCAL_01_IP', "
+CLASS_ARGS="$CLASS_ARGS jenkins_api_user => '$JENKINS_API_USER', "
+CLASS_ARGS="$CLASS_ARGS jenkins_api_key => '$JENKINS_API_KEY', "
+CLASS_ARGS="$CLASS_ARGS jenkins_credentials_id => '$JENKINS_CREDENTIALS_ID', "
+CLASS_ARGS="$CLASS_ARGS jenkins_ssh_public_key_no_whitespace => '$JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE', "
+CLASS_ARGS="$CLASS_ARGS http_proxy => '$HTTP_PROXY', "
+CLASS_ARGS="$CLASS_ARGS https_proxy => '$HTTPS_PROXY', "
+CLASS_ARGS="$CLASS_ARGS no_proxy => '$NO_PROXY', "
 
 # Doing this here because ran into one problem after another trying
 # to do this in Puppet... which won't let me execute Ruby code in

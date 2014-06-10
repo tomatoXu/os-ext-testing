@@ -1,47 +1,51 @@
-script-dir: /home/stack/config/modules/openstack_project/files/nodepool/scripts
+script-dir: /etc/nodepool/scripts
 
-dburi: 'mysql://nodepool:mysqlpw@localhost/nodepool'
+dburi: 'mysql://nodepool:<%= mysql_password %>@localhost/nodepool'
 
 cron:
-  check: '*/15 * * * *'
   cleanup: '*/1 * * * *'
-  update-image: '14 2 * * *'
+  check: '*/15 * * * *'
+  image-update: '14 14 * * *'
 
 zmq-publishers:
   - tcp://localhost:8881
 
+gearman-servers:
+  - host: <%= gearman_server %>
+
 labels:
-# 3PAR hostnames are limited to 23 characters.
-# Nodepool uses the <labelname>-<provider>-<number> format
-# Having the <number> within the 23 characters is important
-# to associate exported volumes with the jenkins job.
-# In the future, this may increase to 31 characters which is
-# the new limit.
   - name: d-p-c
     image: d-p-c
-    min-ready: 3
+    min-ready: 1
     providers:
-      - name: local
+      - name: local_01
 
 providers:
-  - name: local
-    username: 'admin'
-    password: 'hpinvent'
-    auth-url: 'http://10.50.132.1:5000/v2.0'
+  - name: local_01
+    username: '<%= local_username %>'
+    password: '<%= local_password %>'
+    auth-url: 'http://<%= local_01_ip %>:5000/v2.0'
     project-id: 'admin'
-    max-servers: 6
-    keypair: 'devstack'
+    max-servers: 1
+    #This keypair is used to create the image and should be found in the cloud keypairs.
+    #The public/private parts of this keypair need to be in the user who's running nodepool ~/.ssh/id_rsa
+    #You can then login to vm's e.g. ubuntu username using this
+    keypair: 'ramy-stack1-2'
     images:
       - name: d-p-c
         base-image: 'Ubuntu 12.04 Server (Precise)'
         min-ram: 8192
-        setup: prepare_node_devstack.sh
-        private-key: '/home/stack/.ssh/id_rsa'
+#        setup: prepare_node_devstack.sh
+        setup: prepare_node_devstack_http_proxy.sh
+        #Set the public key part only of the jenkin's key (no whitespace) to the NODEPOOL_SSH_KEY environment variable in order to
+        #inject it into the image's jenkins user .ssh/authorized_keys
+        #This key will be used to log in and setup jenkins on the target VM
+        private-key: '/home/stack/os-ext-testing-data/jenkins_key'
 
 targets:
   - name: local-jenkins
     jenkins:
-      url: http://10.50.132.1:8080/
-      user: jenkins
-      apikey: d74701fe98b3238dc2560fb7c8a5e135
-      credentials-id: f1d0dfc0-2435-4f6b-8f5c-4e9f3986fadc
+      url: 'http://localhost:8080/'
+      user: '<%= jenkins_api_user %>'
+      apikey: '<%= jenkins_api_key %>'
+      credentials-id: '<%= jenkins_credentials_id %>'

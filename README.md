@@ -98,7 +98,7 @@ data repository:
 On the machine you will use as your Jenkins master, run the following:
 
 ```
-wget https://raw.github.com/jaypipes/os-ext-testing/master/puppet/install_master.sh
+wget https://raw.github.com/rasselin/os-ext-testing/master/puppet/install_master.sh
 bash install_master.sh
 ```
 
@@ -128,6 +128,10 @@ steps in the Jenkins UI.
 3. Click the `Configure System` link
 
 4. Scroll down until you see "Gearman Plugin Config". Check the "Enable Gearman" checkbox.
+Note: If you don't see it, and this is the first time you start Jenkins,
+you may need restart it:
+
+    sudo service jenkins restart
 
 5. Click the "Test Connection" button and verify Jenkins connects to Gearman.
 

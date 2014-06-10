@@ -11,6 +11,7 @@ class os_ext_testing::master (
   $ssl_chain_file_contents = '',
   $jenkins_ssh_private_key = '',
   $jenkins_ssh_public_key = '',
+  $jenkins_ssh_public_key_no_whitespace = '',
   $publish_host = 'localhost',
   $url_pattern = 'http://localhost/{change.number}/{change.patchset}/{pipeline.name}/{job.name}/{build.number}',
   $log_root_url= "$publish_host/logs",
@@ -24,6 +25,22 @@ class os_ext_testing::master (
   $git_name = 'MyVendor Jenkins',
   $mysql_root_password = '',
   $mysql_password = '',
+  $local_username = 'admin',
+  $local_password = 'password',
+  $local_01_ip = 'localhost',
+  $jenkins_api_user = 'jenkins',
+  # The Jenkins API Key is needed if you have a password for Jenkins user inside Jenkins
+  $jenkins_api_key = 'abcdef1234567890',
+  # The Jenkins credentials_id should match the id field of this element:
+  # <com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey plugin="ssh-credentials@1.6">
+  # inside this file:
+  # /var/lib/jenkins/credentials.xml
+  # which is the private key used by the jenkins master to log into the jenkins
+  # slave node to install and register the node as a jenkins slave
+  $jenkins_credentials_id = 'abcdef-0123-4567-89abcdef0123',
+  $http_proxy = '',
+  $https_proxy = '',
+  $no_proxy = '',
 ) {
   include os_ext_testing::base
   include apache
@@ -280,21 +297,18 @@ class os_ext_testing::master (
     mysql_password           => $mysql_password,
     nodepool_ssh_private_key => $nodepool_ssh_private_key,
     environment              => {
+      #TODO(Ramy) this doesn't seem to do anything...
       'NODEPOOL_SSH_KEY'     => $jenkins_ssh_public_key,
     }
   }
 
   file { '/etc/nodepool/nodepool.yaml':
     ensure  => present,
-    owner   => 'root',
-#    group   => 'root',
+    owner   => 'nodepool',
     group   => 'sudo',
 #    mode    => '0400',
-    mode    => '6600',
-#    content => template("openstack_project/nodepool/${nodepool_template}"),
+    mode    => '0660',
     content => template("os_ext_testing/nodepool/nodepool.yaml.erb"),
-#    content => template('os_ext_testing/jenkins_job_builder/config/macros.yaml.erb'),
-#    source  => 'puppet:///modules/os_ext_testing/nodepool/nodepool.yaml',
     require => [
       File['/etc/nodepool'],
       User['nodepool'],
@@ -310,7 +324,39 @@ class os_ext_testing::master (
     purge   => true,
     force   => true,
     require => File['/etc/nodepool'],
-    source  => 'puppet:///modules/openstack_project/nodepool/scripts',
+    sourceselect => all,
+    source  => [
+        # With sourceselect => our files will take precedance when found in both
+        # Our files include workarounds until some patches land in openstack/infra-config
+        # As well as custom settings to ensure http proxies are taken into consideration
+        'puppet:///modules/os_ext_testing/nodepool',
+        'puppet:///modules/openstack_project/nodepool/scripts',
+      ],
+  }
+
+  #Make sure http proxy environment variables are available to all users
+  file { "/etc/profile.d/set_http_proxy_env.sh":
+      ensure => present,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0755',
+      content => template('os_ext_testing/nodepool/set_http_proxy_env.sh.erb'),
+  }
+
+  file { "/etc/sudoers.d/80-http-proxy":
+      ensure => present,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0440',
+      source => 'puppet:///modules/os_ext_testing/sudoers/80-http-proxy',
+  }
+
+  file { "/etc/sudoers.d/90-nodepool-http-proxy":
+      ensure => present,
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0440',
+      source => 'puppet:///modules/os_ext_testing/sudoers/90-nodepool-http-proxy',
   }
 
 }
