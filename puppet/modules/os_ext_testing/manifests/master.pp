@@ -1,4 +1,4 @@
-vi # Puppet module that installs Jenkins, Zuul, Jenkins Job Builder,
+# Puppet module that installs Jenkins, Zuul, Jenkins Job Builder,
 # and installs JJB and Zuul configuration files from a repository
 # called the "data repository".
 
