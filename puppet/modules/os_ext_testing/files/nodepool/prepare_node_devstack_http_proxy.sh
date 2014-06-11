@@ -33,8 +33,7 @@ sudo bash -xe sudo_keep_proxy_settings.sh
 sudo bash -xe sudo_install_proxy_settings.sh
 
 ./prepare_node.sh "$HOSTNAME" "$SUDO" "$THIN" "$PYTHON3" "$PYPY" "$ALL_MYSQL_PRIVS" "$GIT_BASE"
-#TODO(Ramy) Once the setup is stable, uncomment this to get devstack setup.
-#It's take a long time so skip for now.
-#sudo -u jenkins -i /opt/nodepool-scripts/prepare_devstack.sh $HOSTNAME
+# While testing out the nodepool image creation, comment out the line below since it takes a long time.
+sudo -u jenkins -i /opt/nodepool-scripts/prepare_devstack.sh $HOSTNAME
 
 ./restrict_memory.sh
