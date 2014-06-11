@@ -1,4 +1,4 @@
-# Puppet module that installs Jenkins, Zuul, Jenkins Job Builder,
+vi # Puppet module that installs Jenkins, Zuul, Jenkins Job Builder,
 # and installs JJB and Zuul configuration files from a repository
 # called the "data repository".
 
@@ -205,6 +205,8 @@ class os_ext_testing::master (
     }
   }
 
+  #TODO(Restart Jenkins)
+
   class { '::zuul':
     vhost_name           => "zuul",
     gearman_server       => $gearman_server,
@@ -280,6 +282,11 @@ class os_ext_testing::master (
     source => 'puppet:///modules/openstack_project/zuul/merger-logging.conf',
   }
 
+  #TODO(Ramy) err: /Stage[main]/Recheckwatch/File[/var/www/recheckwatch]/ensure:
+  #change from absent to directory failed: Cannot create
+  #/var/www/recheckwatch; parent directory /var/www does not exist
+  # Note: It does exist...perhaps created later in the script
+
   class { '::recheckwatch':
     gerrit_server                => $upstream_gerrit_server,
     gerrit_user                  => $upstream_gerrit_user,
@@ -295,7 +302,7 @@ class os_ext_testing::master (
   class { '::nodepool':
     mysql_root_password      => $mysql_root_password,
     mysql_password           => $mysql_password,
-    nodepool_ssh_private_key => $nodepool_ssh_private_key,
+    nodepool_ssh_private_key => $jenkins_ssh_private_key,
     environment              => {
       #TODO(Ramy) this doesn't seem to do anything...
       'NODEPOOL_SSH_KEY'     => $jenkins_ssh_public_key,

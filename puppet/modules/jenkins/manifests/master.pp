@@ -126,7 +126,7 @@ class jenkins::master(
   file { '/var/lib/jenkins/.ssh/id_rsa':
     owner   => 'jenkins',
     group   => 'nogroup',
-    mode    => '0600',
+    mode    => '0400',
     content => $jenkins_ssh_private_key,
     replace => true,
     require => File['/var/lib/jenkins/.ssh/'],
@@ -135,7 +135,7 @@ class jenkins::master(
   file { '/var/lib/jenkins/.ssh/id_rsa.pub':
     owner   => 'jenkins',
     group   => 'nogroup',
-    mode    => '0644',
+    mode    => '0444',
     content => $jenkins_ssh_public_key,
     replace => true,
     require => File['/var/lib/jenkins/.ssh/'],

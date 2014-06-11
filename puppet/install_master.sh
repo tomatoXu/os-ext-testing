@@ -14,6 +14,7 @@ OSEXT_REPO=https://github.com/rasselin/os-ext-testing
 PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/config/modules:/etc/puppet/modules"
 
 # Install Puppet and the OpenStack Infra Config source tree
+# TODO(Ramy) Make sure sudo has http proxy settings...
 if [[ ! -e install_puppet.sh ]]; then
   wget https://git.openstack.org/cgit/openstack-infra/config/plain/install_puppet.sh
   sudo bash -xe install_puppet.sh
@@ -149,3 +150,6 @@ sudo mkdir -p /etc/jenkins_jobs/config
 sudo cp -r $DATA_PATH/etc/jenkins_jobs/config/* /etc/jenkins_jobs/config/
 
 sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::master': $CLASS_ARGS }"
+
+#Not sure why nodepool private key is not getting set in the puppet scripts
+sudo cp  $DATA_PATH/$JENKINS_SSH_KEY_PATH /home/nodepool/.ssh/id_rsa
