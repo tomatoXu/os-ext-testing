@@ -192,10 +192,10 @@ couple manual configuration steps in the Jenkins UI.
 12. TODO(Ramy) Make sure the jenkins key is setup in the 'cloud' provider
         with name "jenkins". Also, make it configurable.
 
-13. Start nodepool
+13. Start nodepool:
    ```
    sudo su - nodepool
-   nodepoold -d to start nodepool
+   nodepoold -d
    ```
     TODO(Ramy) why does sudo service nodepool not work?
 
