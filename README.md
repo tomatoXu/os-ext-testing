@@ -169,7 +169,8 @@ couple manual configuration steps in the Jenkins UI.
     sudo cat /var/lib/jenkins/credentials.xml
 
 10. Copy the 'id' of the credential you just created to your vars.sh
-    <?xml version='1.0' encoding='UTF-8'?>
+   ```xml    
+   <?xml version='1.0' encoding='UTF-8'?>
     <com.cloudbees.plugins.credentials.SystemCredentialsProvider plugin="credentials@1.9.4">
       <domainCredentialsMap class="hudson.util.CopyOnWriteMap$Hash">
         <entry>
@@ -182,6 +183,7 @@ couple manual configuration steps in the Jenkins UI.
               <id>ffa3e84c-95a2-40af-82df-6b3aa6b2092c</id>
               <description></description>
               <username>jenkins</username>
+   ```
 
     export JENKINS_CREDENTIALS_ID=ffa3e84c-95a2-40af-82df-6b3aa6b2092c
 
