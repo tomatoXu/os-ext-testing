@@ -52,7 +52,7 @@ in setting up the test platform.
 The easiest way to get your data repository set up is to make a copy of the example
 repository I set up here:
 
-http://github.com/jaypipes/os-ext-testing-data
+http://github.com/rasselin/os-ext-testing-data
 
 and put it somewhere private. There are a few things you will need to do in this
 data repository:
