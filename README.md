@@ -189,12 +189,14 @@ couple manual configuration steps in the Jenkins UI.
 
 11. Re-run the install_master.sh script for your changes to take effect.
 
-12.a. TODO(Ramy) Make sure the jenkins key is setup in the 'cloud' provider
+12. TODO(Ramy) Make sure the jenkins key is setup in the 'cloud' provider
         with name "jenkins". Also, make it configurable.
 
-12. Start nodepool
-    sudo su - nodepool
-    nodepoold -d to start nodepool
+13. Start nodepool
+   ```
+   sudo su - nodepool
+   nodepoold -d to start nodepool
+   ```
     TODO(Ramy) why does sudo service nodepool not work?
 
 ### Setting up Static Jenkins Slaves
