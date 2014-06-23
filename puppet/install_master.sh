@@ -116,7 +116,7 @@ APACHE_SSL_CERT_FILE=`cat $APACHE_SSL_ROOT_DIR/new.cert.cert`
 APACHE_SSL_KEY_FILE=`cat $APACHE_SSL_ROOT_DIR/new.cert.key`
 
 if [[ -z $UPSTREAM_GERRIT_SERVER ]]; then
-    $UPSTREAM_GERRIT_SERVER="review.openstack.org"
+    UPSTREAM_GERRIT_SERVER="review.openstack.org"
 fi
 
 CLASS_ARGS="jenkins_ssh_public_key => '$JENKINS_SSH_PUBLIC_KEY_CONTENTS', jenkins_ssh_private_key => '$JENKINS_SSH_PRIVATE_KEY_CONTENTS', "
