@@ -97,7 +97,10 @@ class os_ext_testing::master (
     version => '0.0.6',
   }
   jenkins::plugin { 'git':
-    version => '1.1.23',
+    version => '2.2.1',
+  }
+  jenkins::plugin { 'git-client':
+    version => '1.9.1',
   }
   jenkins::plugin { 'github-api':
     version => '1.33',
@@ -144,14 +147,20 @@ class os_ext_testing::master (
   jenkins::plugin { 'rebuild':
     version => '1.14',
   }
+  jenkins::plugin { 'scm-api':
+    version => '0.2',
+  }
   jenkins::plugin { 'simple-theme-plugin':
     version => '0.2',
+  }
+  jenkins::plugin { 'ssh-agent':
+    version => '1.4.1',
   }
   jenkins::plugin { 'timestamper':
     version => '1.3.1',
   }
   jenkins::plugin { 'token-macro':
-    version => '1.5.1',
+    version => '1.10',
   }
   jenkins::plugin { 'url-change-trigger':
     version => '1.2',
@@ -366,5 +375,12 @@ class os_ext_testing::master (
       source => 'puppet:///modules/os_ext_testing/sudoers/90-nodepool-http-proxy',
   }
 
+  file {"/var/lib/jenkins/credentials.xml":
+      ensure => present,
+      owner  => 'jenkins',
+      group  => 'jenkins',
+      mode   => '0644',
+      content => template('os_ext_testing/jenkins/credentials.xml.erb'),
+  }
 }
 
