@@ -148,51 +148,12 @@ couple manual configuration steps in the Jenkins UI.
 
 ### Setting up Nodepool Jenkins Slaves
 
-1. Go to the Jenkins web UI. By default, this will be `http://$IP_OF_MASTER:8080`
+1. Re-run the install_master.sh script for your changes to take effect.
 
-2. Click the `Credentials` link on the left
-
-3. Click the `Global credentials` link
-
-4. Click the `Add credentials` link on the left
-
-5. Select `SSH username with private key` from the dropdown labeled "Kind"
-
-6. Enter "jenkins" in the `Username` textbox
-
-7. Select the "From a file on Jenkins master" radio button and enter `/var/lib/jenkins/.ssh/id_rsa` in the File textbox
-
-8. Click the `OK` button
-
-9. On the master node run this command:
-
-    sudo cat /var/lib/jenkins/credentials.xml
-
-10. Copy the 'id' of the credential you just created to your vars.sh
-   ```xml    
-   <?xml version='1.0' encoding='UTF-8'?>
-    <com.cloudbees.plugins.credentials.SystemCredentialsProvider plugin="credentials@1.9.4">
-      <domainCredentialsMap class="hudson.util.CopyOnWriteMap$Hash">
-        <entry>
-          <com.cloudbees.plugins.credentials.domains.Domain>
-            <specifications/>
-          </com.cloudbees.plugins.credentials.domains.Domain>
-          <java.util.concurrent.CopyOnWriteArrayList>
-            <com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey plugin="ssh-credentials@1.6">
-              <scope>GLOBAL</scope>
-              <id>ffa3e84c-95a2-40af-82df-6b3aa6b2092c</id>
-              <description></description>
-              <username>jenkins</username>
-   ```
-
-    export JENKINS_CREDENTIALS_ID=ffa3e84c-95a2-40af-82df-6b3aa6b2092c
-
-11. Re-run the install_master.sh script for your changes to take effect.
-
-12. TODO(Ramy) Make sure the jenkins key is setup in the 'cloud' provider
+2. TODO(Ramy) Make sure the jenkins key is setup in the 'cloud' provider
         with name "jenkins". Also, make it configurable.
 
-13. Start nodepool:
+3. Start nodepool:
    ```
    sudo su - nodepool
    nodepoold -d
