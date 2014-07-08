@@ -124,7 +124,7 @@ CLASS_ARGS="$CLASS_ARGS ssl_cert_file_contents => '$APACHE_SSL_CERT_FILE', ssl_k
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_server => '$UPSTREAM_GERRIT_SERVER', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_user => '$UPSTREAM_GERRIT_USER', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_private_key => '$UPSTREAM_GERRIT_SSH_PRIVATE_KEY_CONTENTS', "
-CLASS_ARGS="$CLASS_ARGS upstream_gerrit_host_pub_key => '$UPSTREAM_GERRIT_HOST_PUB_KEY', "
+CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_host_key => '$UPSTREAM_GERRIT_SSH_HOST_KEY', "
 CLASS_ARGS="$CLASS_ARGS git_email => '$GIT_EMAIL', git_name => '$GIT_NAME', "
 CLASS_ARGS="$CLASS_ARGS publish_host => '$PUBLISH_HOST', "
 CLASS_ARGS="$CLASS_ARGS data_repo_dir => '$DATA_PATH', "

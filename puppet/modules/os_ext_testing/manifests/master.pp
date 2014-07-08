@@ -20,7 +20,7 @@ class os_ext_testing::master (
   $gearman_server = '127.0.0.1',
   $upstream_gerrit_user = '',
   $upstream_gerrit_ssh_private_key = '',
-  $upstream_gerrit_host_pub_key = '',
+  $upstream_gerrit_ssh_host_key = '',
   $git_email = 'testing@myvendor.com',
   $git_name = 'MyVendor Jenkins',
   $mysql_root_password = '',
@@ -226,7 +226,7 @@ class os_ext_testing::master (
   class { '::zuul::merger': }
 
 
-  if $upstream_gerrit_ssh_pub_key != '' {
+  if $upstream_gerrit_ssh_host_key != '' {
     file { '/home/zuul/.ssh':
       ensure  => directory,
       owner   => 'zuul',
@@ -239,7 +239,10 @@ class os_ext_testing::master (
       owner   => 'zuul',
       group   => 'zuul',
       mode    => '0600',
-      content => "[review.openstack.org]:29418,[198.101.231.251]:29418 ${upstream_gerrit_host_pub_key}",
+## http://git.openstack.org/cgit/openstack-infra/config/tree/modules/openstack_project/manifests/zuul_prod.pp#n70
+#      content => "review.openstack.org,23.253.232.87,2001:4800:7815:104:3bc3:d7f6:ff03:bf5d ${gerrit_ssh_host_key}",
+      content => "${upstream_gerrit_ssh_host_key}",
+#      content => "[review.openstack.org]:29418,[198.101.231.251]:29418 ${upstream_gerrit_host_pub_key}",
       replace => true,
       require => File['/home/zuul/.ssh'],
     }
