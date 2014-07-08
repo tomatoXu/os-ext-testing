@@ -125,6 +125,9 @@ CLASS_ARGS="$CLASS_ARGS upstream_gerrit_server => '$UPSTREAM_GERRIT_SERVER', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_user => '$UPSTREAM_GERRIT_USER', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_private_key => '$UPSTREAM_GERRIT_SSH_PRIVATE_KEY_CONTENTS', "
 CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_host_key => '$UPSTREAM_GERRIT_SSH_HOST_KEY', "
+if [[ -n $UPSTREAM_GERRIT_BASEURL ]]; then
+    CLASS_ARGS="$CLASS_ARGS upstream_gerrit_baseurl => '$UPSTREAM_GERRIT_BASEURL', "
+fi
 CLASS_ARGS="$CLASS_ARGS git_email => '$GIT_EMAIL', git_name => '$GIT_NAME', "
 CLASS_ARGS="$CLASS_ARGS publish_host => '$PUBLISH_HOST', "
 CLASS_ARGS="$CLASS_ARGS data_repo_dir => '$DATA_PATH', "
