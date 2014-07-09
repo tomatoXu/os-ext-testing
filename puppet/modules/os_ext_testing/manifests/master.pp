@@ -66,6 +66,19 @@ class os_ext_testing::master (
     $ssl_chain_file = ''
   }
 
+  #TODO:  sudo usermod -d /var/lib/jenkins jenkins
+
+  group { 'jenkins' :
+    ensure => present,
+  }
+
+  user { 'jenkins' :
+    ensure => present,
+    home   => '/var/lib/jenkins',
+    shell  => '/bin/bash',
+    require    => Group['jenkins'],
+  }
+
   class { '::jenkins::master':
     vhost_name              => "jenkins",
     logo                    => 'openstack.png',
