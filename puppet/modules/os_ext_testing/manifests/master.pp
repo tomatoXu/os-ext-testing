@@ -76,7 +76,6 @@ class os_ext_testing::master (
     ensure => present,
     home   => '/var/lib/jenkins',
     shell  => '/bin/bash',
-    require    => Group['jenkins'],
   }
 
   class { '::jenkins::master':
