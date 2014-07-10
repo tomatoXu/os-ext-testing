@@ -221,7 +221,9 @@ class os_ext_testing::master (
   #TODO(Restart Jenkins)
 
   class { '::zuul':
-    vhost_name           => "zuul",
+    #vhost_name           => "zuul",
+    # TODO:Hack. Use ip address because of a vhost naming issue..?
+    vhost_name           => $publish_host,
     gearman_server       => $gearman_server,
     gerrit_server        => $upstream_gerrit_server,
     gerrit_user          => $upstream_gerrit_user,
