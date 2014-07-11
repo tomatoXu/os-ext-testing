@@ -45,6 +45,14 @@ class os_ext_testing::master (
 ) {
   include os_ext_testing::base
   include apache
+  include pip
+
+  package { 'tox>=1.6,<1.7':
+    ensure   => present,
+    provider => pip,
+    require  => Class['pip'],
+  }
+
 
   # Note that we need to do this here, once instead of in the jenkins::master
   # module because zuul also defines these resource blocks and Puppet barfs.
@@ -230,7 +238,7 @@ class os_ext_testing::master (
     gerrit_baseurl      => $upstream_gerrit_baseurl,
     zuul_ssh_private_key => $upstream_gerrit_ssh_private_key,
     url_pattern          => $url_pattern,
-    zuul_url             => $zuul_url,
+    zuul_url             => "http://$publish_host/p/",
     job_name_in_report   => true,
     status_url           => "http://$publish_host/zuul/status",
     statsd_host          => $statsd_host,
