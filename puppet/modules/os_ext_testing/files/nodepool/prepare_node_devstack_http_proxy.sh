@@ -29,11 +29,51 @@ export http_proxy=$NODEPOOL_HTTP_PROXY
 export https_proxy=$NODEPOOL_HTTPS_PROXY
 export no_proxy=$NODEPOOL_NO_PROXY
 
-sudo bash -xe sudo_keep_proxy_settings.sh
-sudo bash -xe sudo_install_proxy_settings.sh
+TEMPFILE=`mktemp`
+echo "Acquire::http::Proxy \"$http_proxy\";" >> $TEMPFILE
+chmod 0444 $TEMPFILE
+sudo chown root:root $TEMPFILE
+sudo mv $TEMPFILE /etc/apt/apt.conf
+
+TEMPFILE=`mktemp`
+echo "Defaults env_keep += \"no_proxy http_proxy https_proxy HTTP_PROXY HTTPS_PROXY NO_PROXY\"" >> $TEMPFILE
+chmod 0440 $TEMPFILE
+sudo chown root:root $TEMPFILE
+sudo mv $TEMPFILE /etc/sudoers.d/60_keep_proxy_settings
+
+sudo visudo -c
+
+TEMPFILE=`mktemp`
+echo "export http_proxy=$http_proxy
+export https_proxy=$http_proxy
+export ftp_proxy=$http_proxy
+export no_proxy=localhost,127.0.0.1,localaddress,.localdomain.com,$no_proxy" >> $TEMPFILE
+chmod 0444 $TEMPFILE
+sudo chown root:root $TEMPFILE
+sudo chmod +x $TEMPFILE
+sudo mv $TEMPFILE /etc/profile.d/set_http_proxy.sh
+
+source /etc/profile.d/set_http_proxy.sh
+
+#Make sure the proxy settings are set, if not already
+if [ -z $http_proxy ]; then
+        export http_proxy=$http_proxy
+        export https_proxy=$http_proxy
+        export ftp_proxy=$http_proxy
+        export no_proxy=localhost,127.0.0.1,localaddress,.localdomain.com,$no_proxy
+fi
+
+TEMPFILE=`mktemp`
+echo "[global]
+proxy = $http_proxy" >> $TEMPFILE
+chmod 0444 $TEMPFILE
+sudo chown root:root $TEMPFILE
+mkdir -p ~/.pip/
+sudo mv -f $TEMPFILE ~/.pip/pip.conf
 
 ./prepare_node.sh "$HOSTNAME" "$SUDO" "$THIN" "$PYTHON3" "$PYPY" "$ALL_MYSQL_PRIVS" "$GIT_BASE"
+
 # While testing out the nodepool image creation, comment out the line below since it takes a long time.
-sudo -u jenkins -i /opt/nodepool-scripts/prepare_devstack.sh $HOSTNAME
+#sudo -u jenkins -i /opt/nodepool-scripts/prepare_devstack.sh $HOSTNAME
 
 ./restrict_memory.sh
