@@ -16,7 +16,7 @@ gearman-servers:
 labels:
   - name: d-p-c
     image: d-p-c
-    min-ready: 1
+    min-ready: 2
     providers:
       - name: local_01
 
@@ -26,7 +26,7 @@ providers:
     password: '<%= local_password %>'
     auth-url: 'http://<%= local_01_ip %>:5000/v2.0'
     project-id: 'admin'
-    max-servers: 1
+    max-servers: 2
     #This keypair is used to create the image and should be found in the cloud keypairs.
     #The public/private parts of this keypair need to be in the user who's running nodepool ~/.ssh/id_rsa
     #You can then login to vm's e.g. ubuntu username using this
