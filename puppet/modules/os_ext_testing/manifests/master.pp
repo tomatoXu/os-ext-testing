@@ -13,6 +13,7 @@ class os_ext_testing::master (
   $jenkins_ssh_public_key = '',
   $jenkins_ssh_public_key_no_whitespace = '',
   $publish_host = 'localhost',
+  $zuul_host = $::ipaddress,
   $url_pattern = 'http://localhost/{change.number}/{change.patchset}/{pipeline.name}/{job.name}/{build.number}',
   $log_root_url= "$publish_host/logs",
   $static_root_url= "$publish_host/static",
@@ -39,7 +40,6 @@ class os_ext_testing::master (
   # which is the private key used by the jenkins master to log into the jenkins
   # slave node to install and register the node as a jenkins slave
   $jenkins_credentials_id = 'abcdef-0123-4567-89abcdef0123',
-  $log_url_root = '10.50.132.35',
   $http_proxy = '',
   $https_proxy = '',
   $no_proxy = '',
@@ -239,16 +239,16 @@ class os_ext_testing::master (
   class { '::zuul':
     #vhost_name           => "zuul",
     # TODO:Hack. Use ip address because of a vhost naming issue..?
-    vhost_name           => $publish_host,
+    vhost_name           => $zuul_host,
     gearman_server       => $gearman_server,
     gerrit_server        => $upstream_gerrit_server,
     gerrit_user          => $upstream_gerrit_user,
-    gerrit_baseurl      => $upstream_gerrit_baseurl,
+    gerrit_baseurl       => $upstream_gerrit_baseurl,
     zuul_ssh_private_key => $upstream_gerrit_ssh_private_key,
     url_pattern          => $url_pattern,
-    zuul_url             => "http://$publish_host/p/",
+    zuul_url             => "http://$zuul_host/p/",
     job_name_in_report   => true,
-    status_url           => "http://$publish_host/zuul/status",
+    status_url           => "http://$zuul_host/zuul/status",
     statsd_host          => $statsd_host,
     git_email            => $git_email,
     git_name             => $git_name
