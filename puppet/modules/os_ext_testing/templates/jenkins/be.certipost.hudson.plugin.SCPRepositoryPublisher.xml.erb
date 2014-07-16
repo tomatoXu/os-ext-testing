@@ -3,12 +3,12 @@
   <sites>
     <be.certipost.hudson.plugin.SCPSite>
       <displayname>LogServer</displayname>
-      <hostname><%= log_root_url %></hostname>
+      <hostname><%= publish_host %></hostname>
       <port>22</port>
       <username>jenkins</username>
       <password></password>
       <keyfile>/var/lib/jenkins/.ssh/id_rsa</keyfile>
-      <rootRepositoryPath>/srv/static/logs</rootRepositoryPath>
+      <rootRepositoryPath>/srv/static</rootRepositoryPath>
     </be.certipost.hudson.plugin.SCPSite>
   </sites>
 </be.certipost.hudson.plugin.SCPRepositoryPublisher_-DescriptorImpl>

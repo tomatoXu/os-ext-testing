@@ -248,7 +248,8 @@ class os_ext_testing::master (
     url_pattern          => $url_pattern,
     zuul_url             => "http://$zuul_host/p/",
     job_name_in_report   => true,
-    status_url           => "http://$zuul_host/zuul/status",
+    #TODO: Somehow zuul status gets sent to the log server host?
+    status_url           => "http://$publish_host/zuul/status",
     statsd_host          => $statsd_host,
     git_email            => $git_email,
     git_name             => $git_name
