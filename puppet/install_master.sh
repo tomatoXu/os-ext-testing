@@ -131,7 +131,9 @@ fi
 CLASS_ARGS="$CLASS_ARGS git_email => '$GIT_EMAIL', git_name => '$GIT_NAME', "
 CLASS_ARGS="$CLASS_ARGS publish_host => '$PUBLISH_HOST', "
 CLASS_ARGS="$CLASS_ARGS data_repo_dir => '$DATA_PATH', "
-CLASS_ARGS="$CLASS_ARGS url_pattern => '$URL_PATTERN', "
+if [[ -n $URL_PATTERN ]]; then
+    CLASS_ARGS="$CLASS_ARGS url_pattern => '$URL_PATTERN', "
+fi
 CLASS_ARGS="$CLASS_ARGS mysql_root_password => '$MYSQL_ROOT_PASSWORD', "
 CLASS_ARGS="$CLASS_ARGS mysql_password => '$MYSQL_PASSWORD', "
 CLASS_ARGS="$CLASS_ARGS local_username => '$LOCAL_USERNAME', "

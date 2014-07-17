@@ -14,7 +14,7 @@ class os_ext_testing::master (
   $jenkins_ssh_public_key_no_whitespace = '',
   $publish_host = 'localhost',
   $zuul_host = $::ipaddress,
-  $url_pattern = 'http://localhost/{change.number}/{change.patchset}/{pipeline.name}/{job.name}/{build.number}',
+  $url_pattern = "http://$publish_host/{build.parameters[LOG_PATH]}",
   $log_root_url= "$publish_host/logs",
   $static_root_url= "$publish_host/static",
   $upstream_gerrit_server = 'review.openstack.org',
