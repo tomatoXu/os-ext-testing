@@ -85,6 +85,6 @@ sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::devs
 
 if [[ ! -e /opt/git ]]; then
     sudo mkdir -p /opt/git
-    sudo -i python /opt/nodepool-scripts/cache_git_repos.py
+    sudo -i python /opt/nodepool-scripts/cache_git_repos.py http://git.openstack.org
     sudo /opt/nodepool-scripts/prepare_devstack.sh
 fi
