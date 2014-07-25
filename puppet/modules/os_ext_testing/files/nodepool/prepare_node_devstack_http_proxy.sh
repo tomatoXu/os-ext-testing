@@ -55,6 +55,18 @@ sudo mv $TEMPFILE /etc/profile.d/set_http_proxy.sh
 
 source /etc/profile.d/set_http_proxy.sh
 
+# Setup proxy settings in the environment, used by jenkins jobs
+echo "http_proxy=$http_proxy
+https_proxy=$http_proxy
+ftp_proxy=$http_proxy
+no_proxy=localhost,127.0.0.1,localaddress,.localdomain.com,$no_proxy" | sudo tee -a /etc/environment
+
+#Disable ipv6
+echo "net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
+
+
 #Make sure the proxy settings are set, if not already
 if [ -z $http_proxy ]; then
         export http_proxy=$http_proxy
