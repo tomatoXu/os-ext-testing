@@ -100,11 +100,8 @@ class os_ext_testing::master (
     jenkins_ssh_public_key  => $jenkins_ssh_public_key,
   }
 
-  jenkins::plugin { 'ansicolor':
-    version => '0.3.1',
-  }
   jenkins::plugin { 'build-timeout':
-    version => '1.10',
+    version => '1.14',
   }
   jenkins::plugin { 'copyartifact':
     version => '1.22',
@@ -116,32 +113,31 @@ class os_ext_testing::master (
     version => '1.70',
   }
   jenkins::plugin { 'gearman-plugin':
-    version => '0.0.6',
+    version => '0.0.7',
   }
   jenkins::plugin { 'git':
     version => '1.1.23',
   }
-  jenkins::plugin { 'github-api':
-    version => '1.33',
-  }
-  jenkins::plugin { 'github':
-    version => '1.4',
-  }
   jenkins::plugin { 'greenballs':
     version => '1.12',
-  }
-  jenkins::plugin { 'htmlpublisher':
-    version => '1.0',
   }
   jenkins::plugin { 'extended-read-permission':
     version => '1.0',
   }
-  jenkins::plugin { 'postbuild-task':
-    version => '1.8',
+  jenkins::plugin { 'zmq-event-publisher':
+    version => '0.0.3',
   }
-  jenkins::plugin { 'violations':
-    version => '0.7.11',
-  }
+#TODO: When version 1.9 is release, uncomment.
+#Until then, see instructions here:
+#http://lists.openstack.org/pipermail/openstack-infra/2013-December/000568.html
+#Or use 1.8 which doesn't have all the features
+#jenkins::plugin { 'scp':
+#  version => '1.8',
+#}
+#  TODO(jeblair): release
+#  jenkins::plugin { 'scp':
+#    version => '1.9',
+#  }
   jenkins::plugin { 'jobConfigHistory':
     version => '1.13',
   }
@@ -157,22 +153,9 @@ class os_ext_testing::master (
   jenkins::plugin { 'openid':
     version => '1.5',
   }
-  jenkins::plugin { 'parameterized-trigger':
-    version => '2.15',
-  }
   jenkins::plugin { 'publish-over-ftp':
     version => '1.7',
   }
-  jenkins::plugin { 'rebuild':
-    version => '1.14',
-  }
-  #TODO: When version 1.9 is release, uncomment.
-  #Until then, see instructions here:
-  #http://lists.openstack.org/pipermail/openstack-infra/2013-December/000568.html
-  #Or use 1.8 which doesn't have all the features
-  #jenkins::plugin { 'scp':
-  #  version => '1.8',
-  #}
   jenkins::plugin { 'simple-theme-plugin':
     version => '0.2',
   }
@@ -182,11 +165,10 @@ class os_ext_testing::master (
   jenkins::plugin { 'token-macro':
     version => '1.5.1',
   }
-  jenkins::plugin { 'url-change-trigger':
-    version => '1.2',
-  }
-  jenkins::plugin { 'urltrigger':
-    version => '0.24',
+
+#Extra, not part of openstack upstream:
+  jenkins::plugin { 'rebuild':
+    version => '1.14',
   }
 
   file { '/var/lib/jenkins/.ssh/config':
@@ -295,7 +277,7 @@ class os_ext_testing::master (
 
   file { '/etc/zuul/openstack_functions.py':
     ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/openstack_functions.py',
+    source  => 'puppet:///modules/os_ext_testing/zuul/openstack_functions.py',
     notify => Exec['zuul-reload'],
   }
 
