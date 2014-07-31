@@ -207,7 +207,7 @@ Jenkins master. To do so manually, follow these steps:
 
 16. Enter `2` in the `Executors` textbox
 
-17. Enter `/home/jenkins/workspaces` in the `Remote FS root` textbox
+17. Enter `/home/jenkins/workspaces` in the `Remote root directory` textbox
 
 18. Enter `devstack_slave` in the `Labels` textbox
 
