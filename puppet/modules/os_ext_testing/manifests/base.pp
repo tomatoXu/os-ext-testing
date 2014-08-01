@@ -35,6 +35,13 @@ class os_ext_testing::base(
     }
   } 
   include sudoers
+  file { '/etc/profile.d/Z98-byobu.sh':
+    ensure => absent,
+  }
+
+  package { 'popularity-contest':
+    ensure => absent,
+  }
 
   if ($::lsbdistcodename == 'oneiric') {
     apt::ppa { 'ppa:git-core/ppa': }
@@ -122,15 +129,31 @@ class os_ext_testing::base(
       key_server => 'pgp.mit.edu',
     }
 
+    file { '/etc/apt/apt.conf.d/80retry':
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0444',
+      source  => 'puppet:///modules/openstack_project/80retry',
+      replace => true,
+    }
+
     file { '/etc/apt/preferences.d/00-puppet.pref':
       ensure  => present,
       owner   => 'root',
       group   => 'root',
       mode    => '0444',
-      source  => 'puppet:///modules/openstack_project/00-puppet.pref',
+      content => template('openstack_project/00-puppet.pref.erb'),
       replace => true,
     }
 
+    file { '/etc/default/puppet':
+      ensure  => present,
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0444',
+      source  => 'puppet:///modules/openstack_project/puppet.default',
+      replace => true,
+    }
   }
 
   file { '/etc/puppet/puppet.conf':
@@ -140,6 +163,10 @@ class os_ext_testing::base(
     mode    => '0444',
     content => template('openstack_project/puppet.conf.erb'),
     replace => true,
+  }
+
+  service { 'puppet':
+    ensure => stopped,
   }
 
   # Although we don't use Nodepool itself, we DO make use of some
