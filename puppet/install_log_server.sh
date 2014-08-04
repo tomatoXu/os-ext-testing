@@ -31,8 +31,11 @@ if [[ "$PULL_LATEST_OSEXT_REPO" == "1" ]]; then
     cd $OSEXT_PATH; git checkout master && sudo git pull; cd $THIS_DIR
 fi
 
+#TODO: Change this to your own domain
 LOG_SERVER_DOMAIN=csim.hp.com
-JENKINS_SSH_PUBLIC_KEY_CONTENTS="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCZBfq9HkS9urOg2lRkv+9B3tKDLu9h3QRd43aoMXQLXmivurnGEeVf1mptpWGeMB6E89XC/+xsMM3MxAlTQAuaTEhQ0aZjYpdawToYaj92BvoQRNShvQOOTIeehcZwJzudXu1WLXlv1+0gJIwPswkVqfnn5ptXePh3qhb2jFaZUQ=="
+
+# No whitespace!
+JENKINS_SSH_PUBLIC_KEY_CONTENTS="AAAAB3NzaC1yc2EAAAADAQABAAAAgQCZBfq9HkS9urOg2lRkv+9B3tKDLu9h3QRd43aoMXQLXmivurnGEeVf1mptpWGeMB6E89XC/+xsMM3MxAlTQAuaTEhQ0aZjYpdawToYaj92BvoQRNShvQOOTIeehcZwJzudXu1WLXlv1+0gJIwPswkVqfnn5ptXePh3qhb2jFaZUQ=="
 
 CLASS_ARGS="domain => '$LOG_SERVER_DOMAIN', "
 CLASS_ARGS="$CLASS_ARGS jenkins_ssh_key => '$JENKINS_SSH_PUBLIC_KEY_CONTENTS', "
