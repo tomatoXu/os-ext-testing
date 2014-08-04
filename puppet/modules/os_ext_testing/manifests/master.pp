@@ -54,6 +54,11 @@ class os_ext_testing::master (
     require  => Class['pip'],
   }
 
+  # Jenkins jobs need proxy information set in the environment
+  file { '/etc/environment':
+    ensure => present,
+    content => template('os_ext_testing/jenkins/environment.erb'),
+  }
 
   # Note that we need to do this here, once instead of in the jenkins::master
   # module because zuul also defines these resource blocks and Puppet barfs.
@@ -215,6 +220,8 @@ class os_ext_testing::master (
       source => 'puppet:///modules/openstack_project/jenkins/jenkins.default',
     }
   }
+
+
 
   #TODO(Restart Jenkins)
 
