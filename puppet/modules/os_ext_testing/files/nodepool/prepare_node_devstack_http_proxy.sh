@@ -83,7 +83,8 @@ sudo chown root:root $TEMPFILE
 mkdir -p ~/.pip/
 sudo mv -f $TEMPFILE ~/.pip/pip.conf
 
-./prepare_node.sh "$HOSTNAME" "$SUDO" "$THIN" "$PYTHON3" "$PYPY" "$ALL_MYSQL_PRIVS" "$GIT_BASE"
+#./prepare_node.sh "$HOSTNAME" "$SUDO" "$THIN" "$PYTHON3" "$PYPY" "$ALL_MYSQL_PRIVS" "$GIT_BASE"
+./prepare_node_no_unbound.sh "$HOSTNAME" "$SUDO" "$THIN" "$PYTHON3" "$PYPY" "$ALL_MYSQL_PRIVS" "$GIT_BASE"
 
 # While testing out the nodepool image creation, comment out the line below since it takes a long time.
 #sudo -u jenkins -i /opt/nodepool-scripts/prepare_devstack.sh $HOSTNAME
