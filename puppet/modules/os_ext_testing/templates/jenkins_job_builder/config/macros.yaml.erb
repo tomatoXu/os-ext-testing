@@ -49,6 +49,26 @@
           fi
 
 - builder:
+    name: gozer-pypi-setup
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          echo "Using pypi mirror  http://pypi.gozer.hpcloud.net/openstack/latest"
+          cat <<EOF > ~/.pydistutils.cfg
+          [easy_install]
+          index_url = http://pypi.gozer.hpcloud.net/openstack/latest
+          find_links = /var/cache/pip
+          EOF
+
+          cat <<EOF > ~/.pip/pip.conf
+          [global]
+          index-url = http://pypi.gozer.hpcloud.net/openstack/latest
+          extra-index-url = http://pypi.python.org/simple
+          find-links = /var/cache/pip
+          timeout = 60
+          EOF
+
+- builder:
     name: openstack-pypi-setup
     builders:
       - shell: |
@@ -56,15 +76,14 @@
           echo "Using pypi mirror http://pypi.openstack.org/openstack"
           cat <<EOF > ~/.pydistutils.cfg
           [easy_install]
-          index_url = http://pypi.openstack.org/openstack
+          index_url = http://pypi.openstack.org/simple
           find_links = /var/cache/pip
           EOF
 
           cat <<EOF > ~/.pip/pip.conf
           [global]
-          index-url = http://pypi.openstack.org/openstack
+          index-url = http://pypi.openstack.org/simple
           extra-index-url = http://pypi.python.org/simple
-          #index-url = http://pypi.openstack.org/openstack
           find-links = /var/cache/pip
           timeout = 60
           EOF
