@@ -23,6 +23,10 @@ if [[ ! -e install_puppet.sh ]]; then
   sudo /bin/bash /root/config/install_modules.sh
 fi
 
+# Update /root/config
+sudo git  --work-tree=/root/config/ --git-dir=/root/config/.git remote update
+sudo git  --work-tree=/root/config/ --git-dir=/root/config/.git pull
+
 # Clone or pull the the os-ext-testing repository
 if [[ ! -d $OSEXT_PATH ]]; then
     echo "Cloning os-ext-testing repo..."
