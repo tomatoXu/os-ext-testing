@@ -276,28 +276,37 @@ class os_ext_testing::master (
     }
   }
 
+  # We need to make sure the configuration is correct before reloading zuul
+  exec { 'zuul-check-reload':
+    command     => '/usr/local/bin/zuul-server -t',
+    logoutput   => on_failure,
+    require     => File['/etc/init.d/zuul'],
+    refreshonly => true,
+    notify => Exec['zuul-reload'],
+  }
+
   file { '/etc/zuul/layout.yaml':
     ensure => present,
     source  => "${data_repo_dir}/etc/zuul/layout.yaml",
-    notify => Exec['zuul-reload'],
+    notify => Exec['zuul-check-reload'],
   }
 
   file { '/etc/zuul/openstack_functions.py':
     ensure => present,
     source  => 'puppet:///modules/os_ext_testing/zuul/openstack_functions.py',
-    notify => Exec['zuul-reload'],
+    notify => Exec['zuul-check-reload'],
   }
 
   file { '/etc/zuul/logging.conf':
     ensure => present,
     source => 'puppet:///modules/openstack_project/zuul/logging.conf',
-    notify => Exec['zuul-reload'],
+    notify => Exec['zuul-check-reload'],
   }
 
   file { '/etc/zuul/gearman-logging.conf':
     ensure => present,
     source => 'puppet:///modules/openstack_project/zuul/gearman-logging.conf',
-    notify => Exec['zuul-reload'],
+    notify => Exec['zuul-check-reload'],
   }
   
   file { '/etc/zuul/merger-logging.conf':
