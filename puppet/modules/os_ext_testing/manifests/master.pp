@@ -15,7 +15,7 @@ class os_ext_testing::master (
   $publish_host = 'localhost',
   $zuul_host = $::ipaddress,
   $url_pattern = "http://$publish_host/{build.parameters[LOG_PATH]}",
-  $log_root_url= "$publish_host/logs",
+  $log_root_url= "$publish_host",
   $static_root_url= "$publish_host/static",
   $upstream_gerrit_server = 'review.openstack.org',
   $gearman_server = '127.0.0.1',
