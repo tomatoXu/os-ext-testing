@@ -33,7 +33,8 @@ providers:
     keypair: 'jenkins'
     images:
       - name: d-p-c
-        base-image: 'Ubuntu 12.04 Server (Precise)'
+	# This is the image name to use found in this provider's `glance image-list`
+        base-image: '<%= local_01_image_name %>'
         min-ram: 8192
 #        setup: prepare_node_devstack.sh
         setup: prepare_node_devstack_http_proxy.sh

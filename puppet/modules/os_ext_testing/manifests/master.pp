@@ -30,6 +30,7 @@ class os_ext_testing::master (
   $local_username = 'admin',
   $local_password = 'password',
   $local_01_ip = 'localhost',
+  $local_01_image_name = 'trusty',
   $jenkins_api_user = 'jenkins',
   # The Jenkins API Key is needed if you have a password for Jenkins user inside Jenkins
   $jenkins_api_key = 'abcdef1234567890',
