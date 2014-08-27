@@ -144,6 +144,9 @@ CLASS_ARGS="$CLASS_ARGS local_username => '$LOCAL_USERNAME', "
 CLASS_ARGS="$CLASS_ARGS local_password => '$LOCAL_PASSWORD', "
 CLASS_ARGS="$CLASS_ARGS local_01_ip => '$LOCAL_01_IP', "
 CLASS_ARGS="$CLASS_ARGS local_01_image_name => '$LOCAL_01_IMAGE_NAME', "
+if [[ -n $LOCAL_01_SETUP_SCRIPT_NAME ]]; then
+    CLASS_ARGS="$CLASS_ARGS local_01_setup_script_name => '$LOCAL_01_SETUP_SCRIPT_NAME', "
+fi
 CLASS_ARGS="$CLASS_ARGS jenkins_api_user => '$JENKINS_API_USER', "
 CLASS_ARGS="$CLASS_ARGS jenkins_api_key => '$JENKINS_API_KEY', "
 CLASS_ARGS="$CLASS_ARGS jenkins_credentials_id => '$JENKINS_CREDENTIALS_ID', "

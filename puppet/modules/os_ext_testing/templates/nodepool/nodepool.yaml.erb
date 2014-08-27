@@ -36,8 +36,8 @@ providers:
         # This is the image name to use found in this provider's `glance image-list`
         base-image: '<%= local_01_image_name %>'
         min-ram: 8192
-#        setup: prepare_node_devstack.sh
-        setup: prepare_node_devstack_http_proxy.sh
+        # This is the script that will be used to prepare the image
+        setup: <%= local_01_setup_script_name %>
         #Set the public key part only of the jenkin's key (no whitespace) to the NODEPOOL_SSH_KEY environment variable in order to
         #inject it into the image's jenkins user .ssh/authorized_keys
         #This key will be used to log in and setup jenkins on the target VM
