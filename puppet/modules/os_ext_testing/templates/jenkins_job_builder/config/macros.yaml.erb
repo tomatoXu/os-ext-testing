@@ -49,24 +49,16 @@
           fi
 
 - builder:
-    name: gozer-pypi-setup
+    name: python-install-from-zuul
     builders:
       - shell: |
           #!/bin/bash -xe
-          echo "Using pypi mirror  http://pypi.gozer.hpcloud.net/openstack/latest"
-          cat <<EOF > ~/.pydistutils.cfg
-          [easy_install]
-          index_url = http://pypi.gozer.hpcloud.net/openstack/latest
-          find_links = /var/cache/pip
-          EOF
+          # Install the client from the patch
+          git clone $ZUUL_URL/$ZUUL_PROJECT
+          cd $ZUUL_PROJECT
+          git fetch $ZUUL_URL/$ZUUL_PROJECT $ZUUL_REF
 
-          cat <<EOF > ~/.pip/pip.conf
-          [global]
-          index-url = http://pypi.gozer.hpcloud.net/openstack/latest
-          extra-index-url = http://pypi.python.org/simple
-          find-links = /var/cache/pip
-          timeout = 60
-          EOF
+          sudo python setup.py install
 
 - builder:
     name: openstack-pypi-setup
