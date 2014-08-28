@@ -160,6 +160,8 @@ CLASS_ARGS="$CLASS_ARGS no_proxy => '$NO_PROXY', "
 # a manifest and doesn't allow you to "merge" the contents of two
 # directory sources in the file resource. :(
 sudo mkdir -p /etc/jenkins_jobs/config
+#Delete everything so that it get's refreshed by puppet
+sudo rm -rf /etc/jenkins_jobs/config/*
 sudo cp -r $DATA_PATH/etc/jenkins_jobs/config/* /etc/jenkins_jobs/config/
 
 sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::master': $CLASS_ARGS }"
