@@ -19,6 +19,13 @@ labels:
     min-ready: 2
     providers:
       - name: local_01
+<% if enable_fc -%>
+  - name: d-p-c-fc
+    image: d-p-c-fc
+    min-ready: 2
+    providers:
+      - name: local_01_fc
+<% end -%>
 
 providers:
   - name: local_01
@@ -42,6 +49,24 @@ providers:
         #inject it into the image's jenkins user .ssh/authorized_keys
         #This key will be used to log in and setup jenkins on the target VM
         private-key: '/home/nodepool/.ssh/id_rsa'
+<% if enable_fc -%>
+# Due to the name of FC passthrough, at most one node per blade can be enabled.
+# To acheive this with nodepool, create a "new" provider with max-server : 1
+# and this single image.
+  - name: local_01_fc
+    username: '<%= local_username %>'
+    password: '<%= local_password %>'
+    auth-url: 'http://<%= local_01_ip %>:5000/v2.0'
+    project-id: 'admin'
+    max-servers: 1
+    keypair: 'jenkins'
+    images:
+      - name: d-p-c-fc
+        base-image: '<%= local_01_image_name %>'
+        min-ram: 8192
+        setup: <%= local_01_setup_script_name %>
+        private-key: '/home/nodepool/.ssh/id_rsa'
+<% end -%>
 
 targets:
   - name: local-jenkins

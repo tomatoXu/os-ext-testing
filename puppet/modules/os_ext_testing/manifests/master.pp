@@ -32,6 +32,11 @@ class os_ext_testing::master (
   $local_01_ip = 'localhost',
   $local_01_image_name = 'trusty',
   $local_01_setup_script_name = 'prepare_node_devstack.sh',
+  #This is the username of the blade that has the fc passthrough public
+  # key installed in the ~/.ssh/authorized_keys & sudo permissions to
+  # enable pci passthrough
+  $local_01_fc_user = 'stack',
+  $enable_fc = false,
   $jenkins_api_user = 'jenkins',
   # The Jenkins API Key is needed if you have a password for Jenkins user inside Jenkins
   $jenkins_api_key = 'abcdef1234567890',
@@ -212,6 +217,17 @@ class os_ext_testing::master (
       mode   => '0755',
       content => template('os_ext_testing/jenkins_job_builder/config/macros.yaml.erb'),
       notify  => Exec['jenkins_jobs_update'],
+    }
+
+    if $enable_fc != false {
+      file { '/etc/jenkins_jobs/config/macros-fc.yaml':
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
+        content => template('os_ext_testing/jenkins_job_builder/config/macros-fc.yaml.erb'),
+        notify  => Exec['jenkins_jobs_update'],
+      }
     }
 
     file { '/etc/default/jenkins':
