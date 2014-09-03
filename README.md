@@ -111,12 +111,13 @@ Puppet will proceed to set up the Jenkins master.
 
 #### Manual setup of Jenkins scp 1.9 plugin
 
-Version 1.8 is publicly available, but does not have all features (e.g. copy console log file).
+Version 1.8 is publicly available, but does not have all features (e.g. copy console log file, copy files after failure, etc.).
 Follow these steps to manually build and install the scp 1.9 plugin:
 * git clone https://github.com/jenkinsci/scp-plugin
 * cd scp-plugin; mvn package
 * Jenkins Manage Plugins; Advanced; Upload Plugin  (target/scp.hpi from the
 maven build)
+
 Source: `http://lists.openstack.org/pipermail/openstack-infra/2013-December/000568.html`
 
 #### Restart Jenkins to get the plugins fully installed
