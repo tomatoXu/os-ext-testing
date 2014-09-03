@@ -150,3 +150,13 @@
           # Run passthrough and clean up.
           ssh -i passthrough $PROVIDER "virsh nodedev-dettach $PCI_CARD"
           ssh -i passthrough $PROVIDER "virsh attach-device $VIRSH_NAME /tmp/fcoe.xml"
+
+- builder:
+    name: install_fc_driver
+    builders:
+      - shell: |
+          #!/bin/bash -xe
+          sudo apt-get -y install linux-image-extra-3.13.0-35-generic sysfsutils multipath-tools
+          sudo modprobe lpfc
+          sudo systool -c fc_host -v
+
