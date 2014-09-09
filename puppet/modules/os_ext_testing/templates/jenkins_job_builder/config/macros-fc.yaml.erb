@@ -121,23 +121,35 @@
           # script finds the Fibre Channel PCI card on the provider and generates the
           # information Virsh needs to attach it.
 
-          PROVIDER=<%= local_01_fc_user %>@<%= local_01_ip %>
+          #TODO: Move this to the image process so that this script can be generic
+          echo "10.50.137.2 provider" | sudo tee -a /etc/hosts
+          PROVIDER=stack@provider
+
+          #There are ssh issues running the commands where after a while ssh
+          # commands hang. Using verbose output it is here:
+          # debug1: Requesting no-more-sessions@openssh.com
+          # debug1: Entering interactive session.
+          # Disable this feature http://www.linuxjournal.com/content/speed-multiple-ssh-connections-same-server
+          echo "Host *
+             GSSAPIAuthentication no
+             GSSAPIDelegateCredentials yes
+             ControlMaster auto
+             ControlPath ~/.ssh/master-%r@%h:%p" >> .ssh/config
 
           # Finding local IP leads to Nova ID leads to virsh name.
-
           IP=$(hostname -i)
-          echo "Node IP is $IP"
+          NOVA_LIST=$(ssh -i passthrough $PROVIDER 'source devstack/openrc admin admin && nova list')
+          ID=$(echo "$NOVA_LIST" | python process_outputs.py --ip $IP)
 
-          ID=$(ssh -i passthrough $PROVIDER 'source devstack/openrc admin admin && nova list' | python process_outputs.py --ip $IP)
-          echo "Node ID is $ID"
 
-          VIRSH_NAME=$(ssh -i passthrough $PROVIDER "source devstack/openrc admin admin && nova show $ID" | python process_outputs.py --virsh_name)
-          echo "Node's virsh name is $VIRSH_NAME"
+          NOVA_ID=$(ssh -i passthrough $PROVIDER "source devstack/openrc admin admin && nova show $ID")
+          VIRSH_NAME=$(echo "$NOVA_ID" | python process_outputs.py --virsh_name)
+
 
           # Discover PCI card and generate XML and sed snippets to allow attachment.
+          LSPCI=$(ssh -i passthrough $PROVIDER 'lspci | grep "Fibre Channel"')
+          PCI_CARD=$(echo "$LSPCI" | python process_outputs.py --pci)
 
-          PCI_CARD=$(ssh -i passthrough $PROVIDER 'lspci | grep "Fibre Channel"' | python process_outputs.py --pci)
-          echo "PCI card being passed through is $PCI_CARD"
 
           XML=$(echo $PCI_CARD | python process_outputs.py --xml)
           CMD="sed -i s,<address domain='0x0000' bus='0x5' slot='0x00' function='0x2'/>,"$XML",g /tmp/fcoe.xml"
@@ -159,4 +171,8 @@
           sudo apt-get -y install linux-image-extra-3.13.0-35-generic sysfsutils multipath-tools
           sudo modprobe lpfc
           sudo systool -c fc_host -v
+
+          #Not sure why this is needed, but install a few more libraries to help install python lxml
+          #http://15.126.198.151/17/119017/1/silent/dsvm-tempest-hp-3par-fc/3dd141c/console.html
+          sudo apt-get -y install libxml2-dev libxslt1-dev lib32z1-dev
 
