@@ -27,16 +27,10 @@ class os_ext_testing::master (
   $git_name = 'MyVendor Jenkins',
   $mysql_root_password = '',
   $mysql_password = '',
-  $local_username = 'admin',
-  $local_password = 'password',
-  $local_01_ip = 'localhost',
-  $local_01_image_name = 'trusty',
-  $local_01_setup_script_name = 'prepare_node_devstack.sh',
-  #This is the username of the blade that has the fc passthrough public
-  # key installed in the ~/.ssh/authorized_keys & sudo permissions to
-  # enable pci passthrough
-  $local_01_fc_user = 'stack',
-  $enable_fc = false,
+  $provider_username = 'admin',
+  $provider_password = 'password',
+  $provider_image_name = 'trusty',
+  $provider_image_setup_script_name = 'prepare_node_devstack.sh',
   $jenkins_api_user = 'jenkins',
   # The Jenkins API Key is needed if you have a password for Jenkins user inside Jenkins
   $jenkins_api_key = 'abcdef1234567890',

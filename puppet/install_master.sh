@@ -84,6 +84,14 @@ else
     JENKINS_SSH_PUBLIC_KEY_CONTENTS=`sudo cat $DATA_PATH/$JENKINS_SSH_KEY_PATH.pub`
 fi
 
+# Copy over the nodepool template
+if [[ ! -e "$DATA_PATH/etc/nodepool/nodepool.yaml.erb" ]]; then
+    echo "Expected to find nodepool template at $DATA_PATH/etc/nodepool/nodepool.yaml.erb, but wasn't found. Please create this using the sample provided. Exiting."
+    exit 1
+else
+    cp -f $DATA_PATH/etc/nodepool/nodepool.yaml.erb $OSEXT_PATH/puppet/modules/os_ext_testing/templates/nodepool
+fi
+
 PUBLISH_HOST=${PUBLISH_HOST:-localhost}
 
 # Create a self-signed SSL certificate for use in Apache
@@ -138,22 +146,23 @@ CLASS_ARGS="$CLASS_ARGS data_repo_dir => '$DATA_PATH', "
 if [[ -n $URL_PATTERN ]]; then
     CLASS_ARGS="$CLASS_ARGS url_pattern => '$URL_PATTERN', "
 fi
+
 CLASS_ARGS="$CLASS_ARGS mysql_root_password => '$MYSQL_ROOT_PASSWORD', "
 CLASS_ARGS="$CLASS_ARGS mysql_password => '$MYSQL_PASSWORD', "
-CLASS_ARGS="$CLASS_ARGS local_username => '$LOCAL_USERNAME', "
-CLASS_ARGS="$CLASS_ARGS local_password => '$LOCAL_PASSWORD', "
-CLASS_ARGS="$CLASS_ARGS local_01_ip => '$LOCAL_01_IP', "
-CLASS_ARGS="$CLASS_ARGS local_01_image_name => '$LOCAL_01_IMAGE_NAME', "
-if [[ -n $LOCAL_01_SETUP_SCRIPT_NAME ]]; then
-    CLASS_ARGS="$CLASS_ARGS local_01_setup_script_name => '$LOCAL_01_SETUP_SCRIPT_NAME', "
+
+CLASS_ARGS="$CLASS_ARGS provider_username => '$PROVIDER_USERNAME', "
+CLASS_ARGS="$CLASS_ARGS provider_password => '$PROVIDER_PASSWORD', "
+CLASS_ARGS="$CLASS_ARGS provider_image_name => '$PROVIDER_IMAGE_NAME', "
+if [[ -n $PROVIDER_IMAGE_SETUP_SCRIPT_NAME ]]; then
+    CLASS_ARGS="$CLASS_ARGS provider_image_setup_script_name => '$PROVIDER_IMAGE_SETUP_SCRIPT_NAME', "
 fi
-if [[ -n $ENABLE_FC ]]; then
-    CLASS_ARGS="$CLASS_ARGS enable_fc => '$ENABLE_FC', "
-fi
+
 CLASS_ARGS="$CLASS_ARGS jenkins_api_user => '$JENKINS_API_USER', "
 CLASS_ARGS="$CLASS_ARGS jenkins_api_key => '$JENKINS_API_KEY', "
 CLASS_ARGS="$CLASS_ARGS jenkins_credentials_id => '$JENKINS_CREDENTIALS_ID', "
 CLASS_ARGS="$CLASS_ARGS jenkins_ssh_public_key_no_whitespace => '$JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE', "
+
+
 CLASS_ARGS="$CLASS_ARGS http_proxy => '$HTTP_PROXY', "
 CLASS_ARGS="$CLASS_ARGS https_proxy => '$HTTPS_PROXY', "
 CLASS_ARGS="$CLASS_ARGS no_proxy => '$NO_PROXY', "
@@ -163,7 +172,7 @@ CLASS_ARGS="$CLASS_ARGS no_proxy => '$NO_PROXY', "
 # a manifest and doesn't allow you to "merge" the contents of two
 # directory sources in the file resource. :(
 sudo mkdir -p /etc/jenkins_jobs/config
-#Delete everything so that it get's refreshed by puppet
+#Delete everything so that it gets refreshed by puppet
 sudo rm -rf /etc/jenkins_jobs/config/*
 sudo cp -r $DATA_PATH/etc/jenkins_jobs/config/* /etc/jenkins_jobs/config/
 
