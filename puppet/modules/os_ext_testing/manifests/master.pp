@@ -418,6 +418,7 @@ class os_ext_testing::master (
       content => template('os_ext_testing/jenkins/credentials.xml.erb'),
   }
 
+
   file {"/var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml":
       ensure => present,
       owner  => 'jenkins',
@@ -426,6 +427,14 @@ class os_ext_testing::master (
       content => template('os_ext_testing/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.erb'),
   }
 
-
+  # FIXME: Any changes currently require jenkins to be restarted. For now, use and alert.
+  exec { 'jenkins_restart_scp':
+      path    => "/usr/local/bin/:/bin:/usr/sbin",
+      command => 'echo "Jenkins must be manually restarted in order for SCPRepositoryPublisher changes to take affect." ',
+      logoutput => "true",
+      refreshonly => true,
+      loglevel => 'alert',
+      subscribe => File['/var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml']
+  }
 }
 
