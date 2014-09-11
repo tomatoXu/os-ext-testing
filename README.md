@@ -13,8 +13,12 @@ It installs Jenkins, Jenkins Job Builder (JJB), the Gerrit
 Jenkins plugin, Nodepool, HTTP Proxy settings, and a set of scripts that make
 running a variety of OpenStack integration tests easy.
 
-Currently only Puppet modules are complete and tested. Ansible scripts
-will follow afterwards.
+Currently only Puppet modules are complete and tested. 
+
+Ubuntu 12.04 was used and tested and is recommended.
+Upstream puppet scripts used do not support Ubuntu 14.04: You'll get an 
+error installing Apache.
+
 
 ## Pre-requisites
 
@@ -150,10 +154,12 @@ couple manual configuration steps in the Jenkins UI.
 4. Scroll down until you see "Gearman Plugin Config". Check the "Enable Gearman" checkbox.
 
 5. Click the "Test Connection" button and verify Jenkins connects to Gearman.
+6. Scroll to "ZMQ Event Publisher" and select "Enable on all Jobs". Double-check
+ the port matches the configure in `$DATA_REPO/etc/nodepool/nodepool.erb`
 
-6. Scroll down to the bottom of the page and click `Save`
+7. Scroll down to the bottom of the page and click `Save`
 
-7. At the command line, do this::
+8. At the command line, do this::
 
     sudo service zuul restart
 
