@@ -1,5 +1,5 @@
 - builder:
-    name: create_process_outputs
+    name: create-process-outputs
     builders:
       - shell: |
           #!/bin/bash -xe
@@ -83,7 +83,7 @@
           sudo mv -f $TEMPFILE /home/jenkins/process_outputs.py
 
 - builder:
-    name: create_fcoe
+    name: create-fcoe
     builders:
       - shell: |
           #!/bin/bash -xe
@@ -100,12 +100,12 @@
           sudo mv -f $TEMPFILE /home/jenkins/fcoe.xml
 
 - builder:
-    name: invoke_fc_passthrough
+    name: invoke-fc-passthrough
     builders:
-      - create_process_outputs
-      - create_fcoe
-      # The create_passthrough_private_key macro is defined in the -data repoo
-      - create_passthrough_private_key
+      - create-process-outputs
+      - create-fcoe
+      # The create-passthrough-private-key macro is defined in the -data repo
+      - create-passthrough-private-key
       - shell: |
           #!/bin/bash -xe
 
@@ -164,7 +164,7 @@
           ssh -i passthrough $PROVIDER "virsh attach-device $VIRSH_NAME /tmp/fcoe.xml"
 
 - builder:
-    name: install_fc_driver
+    name: install-fc-driver
     builders:
       - shell: |
           #!/bin/bash -xe
