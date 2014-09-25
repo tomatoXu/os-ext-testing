@@ -167,15 +167,6 @@ CLASS_ARGS="$CLASS_ARGS http_proxy => '$HTTP_PROXY', "
 CLASS_ARGS="$CLASS_ARGS https_proxy => '$HTTPS_PROXY', "
 CLASS_ARGS="$CLASS_ARGS no_proxy => '$NO_PROXY', "
 
-# Doing this here because ran into one problem after another trying
-# to do this in Puppet... which won't let me execute Ruby code in
-# a manifest and doesn't allow you to "merge" the contents of two
-# directory sources in the file resource. :(
-sudo mkdir -p /etc/jenkins_jobs/config
-#Delete everything so that it gets refreshed by puppet
-sudo rm -rf /etc/jenkins_jobs/config/*
-sudo cp -r $DATA_PATH/etc/jenkins_jobs/config/* /etc/jenkins_jobs/config/
-
 sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::master': $CLASS_ARGS }"
 
 #Not sure why nodepool private key is not getting set in the puppet scripts

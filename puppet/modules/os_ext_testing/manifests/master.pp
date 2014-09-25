@@ -191,17 +191,7 @@ class os_ext_testing::master (
       url      => "http://127.0.0.1:8080/",
       username => 'jenkins',
       password => '',
-    }
-
-    file { '/etc/jenkins_jobs/config':
-      ensure  => directory,
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0755',
-      recurse => true,
-      force   => true,
-      source  => 'puppet:///modules/os_ext_testing/jenkins_job_builder/config',
-      notify  => Exec['jenkins_jobs_update'],
+      config_dir =>"${data_repo_dir}/etc/jenkins_jobs/config/",
     }
 
     file { '/etc/jenkins_jobs/config/macros.yaml':
@@ -255,7 +245,11 @@ class os_ext_testing::master (
     git_name             => $git_name
   }
 
-  class { '::zuul::server': }
+  class { '::zuul::server':
+    layout_dir  => [
+        "${data_repo_dir}/etc/zuul/",
+      ]
+  }
   class { '::zuul::merger': }
 
 
@@ -296,13 +290,7 @@ class os_ext_testing::master (
     notify => Exec['zuul-reload'],
   }
 
-  file { '/etc/zuul/layout.yaml':
-    ensure => present,
-    source  => "${data_repo_dir}/etc/zuul/layout.yaml",
-    notify => Exec['zuul-check-reload'],
-  }
-
-  file { '/etc/zuul/openstack_functions.py':
+  file { '/etc/zuul/layout/openstack_functions.py':
     ensure => present,
     source  => 'puppet:///modules/os_ext_testing/zuul/openstack_functions.py',
     notify => Exec['zuul-check-reload'],
