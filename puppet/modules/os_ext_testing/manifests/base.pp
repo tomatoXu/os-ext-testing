@@ -180,7 +180,7 @@ class os_ext_testing::base(
     recurse => true,
     purge   => true,
     force   => true,
-    source  => 'puppet:///modules/openstack_project/nodepool/scripts',
+    source  => '/root/project-config/nodepool/scripts',
   }
 
 }

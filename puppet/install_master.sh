@@ -13,19 +13,32 @@ OSEXT_PATH=$THIS_DIR/os-ext-testing
 OSEXT_REPO=https://github.com/rasselin/os-ext-testing
 PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/config/modules:/etc/puppet/modules"
 
+if ! sudo test -d /root/config; then
+  sudo git clone https://review.openstack.org/p/openstack-infra/config.git \
+    /root/config
+fi
+
+if ! sudo test -d /root/project-config; then
+  sudo git clone https://github.com/openstack-infra/project-config.git \
+    /root/project-config
+fi
+
 # Install Puppet and the OpenStack Infra Config source tree
 # TODO(Ramy) Make sure sudo has http proxy settings...
 if [[ ! -e install_puppet.sh ]]; then
   wget https://git.openstack.org/cgit/openstack-infra/config/plain/install_puppet.sh
   sudo bash -xe install_puppet.sh
-  sudo git clone https://review.openstack.org/p/openstack-infra/config.git \
-    /root/config
   sudo /bin/bash /root/config/install_modules.sh
 fi
 
 # Update /root/config
+echo "Update infra-config"
 sudo git  --work-tree=/root/config/ --git-dir=/root/config/.git remote update
 sudo git  --work-tree=/root/config/ --git-dir=/root/config/.git pull
+
+echo "Update project-config"
+sudo git  --work-tree=/root/project-config/ --git-dir=/root/config/.git remote update
+sudo git  --work-tree=/root/project-config/ --git-dir=/root/config/.git pull
 
 # Clone or pull the the os-ext-testing repository
 if [[ ! -d $OSEXT_PATH ]]; then

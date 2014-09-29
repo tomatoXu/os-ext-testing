@@ -368,7 +368,7 @@ class os_ext_testing::master (
         # Our files include workarounds until some patches land in openstack/infra-config
         # As well as custom settings to ensure http proxies are taken into consideration
         'puppet:///modules/os_ext_testing/nodepool',
-        'puppet:///modules/openstack_project/nodepool/scripts',
+        '/root/project-config/nodepool/scripts',
       ],
   }
 
