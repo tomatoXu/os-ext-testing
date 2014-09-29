@@ -168,11 +168,10 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          sudo apt-get -y install linux-image-extra-3.13.0-35-generic sysfsutils multipath-tools
+          sudo apt-get -y install linux-image-extra-3.13.0-36-generic sysfsutils multipath-tools
           sudo modprobe lpfc
           sudo systool -c fc_host -v
 
           #Not sure why this is needed, but install a few more libraries to help install python lxml
-          #http://15.126.198.151/17/119017/1/silent/dsvm-tempest-hp-3par-fc/3dd141c/console.html
           sudo apt-get -y install libxml2-dev libxslt1-dev lib32z1-dev
 
