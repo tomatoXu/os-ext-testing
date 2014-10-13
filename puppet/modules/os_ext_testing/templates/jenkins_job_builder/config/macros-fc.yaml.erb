@@ -168,7 +168,7 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          sudo apt-get -y install linux-image-extra-3.13.0-36-generic sysfsutils multipath-tools
+          sudo apt-get -y install linux-image-extra-$(uname -r) sysfsutils multipath-tools
           sudo modprobe lpfc
           sudo systool -c fc_host -v
 
