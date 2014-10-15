@@ -17,19 +17,25 @@
 # limitations under the License.
 
 HOSTNAME=$1
-SUDO=$2
-THIN=$3
-PYTHON3=${4:-false}
-PYPY=${5:-false}
-ALL_MYSQL_PRIVS=${6:-false}
-GIT_BASE=${7:-git://git.openstack.org}
+
+SUDO=${SUDO:-true}
+THIN=${THIN:-true}
+PYTHON3=${PYTHON3:-false}
+PYPY=${PYPY:-false}
+ALL_MYSQL_PRIVS=${ALL_MYSQL_PRIVS:-false}
+GIT_BASE=${GIT_BASE:-git://git.openstack.org}
+
 ENABLE_UNBOUND=false
 
+export PUPPET_VERSION=${PUPPET_VERSION:-'2'}
+
 sudo hostname $HOSTNAME
-if [ -n "$HOSTNAME" ] && ! grep -q $HOSTNAME /etc/hosts
-then
+if [ -n "$HOSTNAME" ] && ! grep -q $HOSTNAME /etc/hosts ; then
     echo "127.0.1.1 $HOSTNAME" | sudo tee -a /etc/hosts
 fi
+
+echo $HOSTNAME > /tmp/image-hostname.txt
+sudo mv /tmp/image-hostname.txt /etc/image-hostname.txt
 
 # Fedora image doesn't come with wget
 if [ -f /usr/bin/yum ]; then
@@ -40,10 +46,11 @@ sudo bash -xe install_puppet.sh
 
 sudo git clone --depth=1 $GIT_BASE/openstack-infra/config.git \
     /root/config
-
 sudo /bin/bash /root/config/install_modules.sh
+
+set +e
 if [ -z "$NODEPOOL_SSH_KEY" ] ; then
-    sudo puppet apply --modulepath=/root/config/modules:/etc/puppet/modules \
+    sudo puppet apply --detailed-exitcodes --modulepath=/root/config/modules:/etc/puppet/modules \
         -e "class {'openstack_project::single_use_slave':
                 sudo => $SUDO,
                 thin => $THIN,
@@ -52,8 +59,9 @@ if [ -z "$NODEPOOL_SSH_KEY" ] ; then
                 all_mysql_privs => $ALL_MYSQL_PRIVS,
                 enable_unbound => $ENABLE_UNBOUND,
             }"
+    PUPPET_RET_CODE=$?
 else
-    sudo puppet apply --modulepath=/root/config/modules:/etc/puppet/modules \
+    sudo puppet apply --detailed-exitcodes --modulepath=/root/config/modules:/etc/puppet/modules \
         -e "class {'openstack_project::single_use_slave':
                 install_users => false,
                 sudo => $SUDO,
@@ -64,7 +72,14 @@ else
                 ssh_key => '$NODEPOOL_SSH_KEY',
                 enable_unbound => $ENABLE_UNBOUND,
             }"
+    PUPPET_RET_CODE=$?
 fi
+# Puppet doesn't properly return exit codes. Check here the values that
+# indicate failure of some sort happened. 0 and 2 indicate success.
+if [ "$PUPPET_RET_CODE" -eq "4" ] || [ "$PUPPET_RET_CODE" -eq "6" ] ; then
+    exit $PUPPET_RET_CODE
+fi
+set -e
 
 # Make sure DNS works.
 dig git.openstack.org
@@ -100,7 +115,13 @@ fi
 # here.
 sudo rm -f /etc/cron.{monthly,weekly,daily,hourly,d}/*
 
+# Install Zuul into a virtualenv
+# This is in /usr instead of /usr/local due to this bug on precise:
+# https://bugs.launchpad.net/ubuntu/+source/python2.7/+bug/839588
+git clone /opt/git/openstack-infra/zuul /tmp/zuul
+sudo virtualenv /usr/zuul-env
+sudo /usr/zuul-env/bin/pip install /tmp/zuul
+sudo rm -fr /tmp/zuul
+
 sync
 sleep 5
-
-
