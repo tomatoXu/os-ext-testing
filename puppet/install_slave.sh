@@ -12,6 +12,8 @@ OSEXT_PATH=$THIS_DIR/os-ext-testing
 OSEXT_REPO=https://github.com/rasselin/os-ext-testing
 PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/config/modules:/etc/puppet/modules"
 
+export PUPPET_VERSION=${PUPPET_VERSION:-'2'}
+
 if ! sudo test -d /root/config; then
   sudo git clone https://review.openstack.org/p/openstack-infra/config.git \
     /root/config
