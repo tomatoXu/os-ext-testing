@@ -27,8 +27,6 @@ GIT_BASE=${GIT_BASE:-git://git.openstack.org}
 
 ENABLE_UNBOUND=false
 
-export PUPPET_VERSION=${PUPPET_VERSION:-'2'}
-
 sudo hostname $HOSTNAME
 if [ -n "$HOSTNAME" ] && ! grep -q $HOSTNAME /etc/hosts ; then
     echo "127.0.1.1 $HOSTNAME" | sudo tee -a /etc/hosts

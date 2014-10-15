@@ -20,6 +20,7 @@
 HOSTNAME=$1
 export ALL_MYSQL_PRIVS='true'
 export GIT_BASE=http://git.openstack.org
+export PIP_MIRROR=${PIP_MIRROR:-http://pypi.gozer.hpcloud.net/openstack/latest}
 
 ######################
 # HTTP Proxy settings
@@ -75,13 +76,44 @@ if [ -z $http_proxy ]; then
         export no_proxy=localhost,127.0.0.1,localaddress,.localdomain.com,$no_proxy
 fi
 
-TEMPFILE=`mktemp`
-echo "[global]
+
+
+set +e
+wget --spider $PIP_MIRROR
+rc=$?
+set -e
+if [ $rc -eq 0 ]; then
+    sudo mkdir -p /var/cache/pip
+    sudo mkdir -p /root/.pip/
+    mkdir -p ~/.pip
+    cat <<EOF > ~/.pydistutils.cfg
+[easy_install]
+index_url=$PIP_MIRROR
+find_links=/var/cache/pip
+EOF
+    cat <<EOF > ~/.pip/pip.conf
+[global]
+proxy = $http_proxy"
+index-url=$PIP_MIRROR
+extra-index-url=http://pypi.python.org/simple
+find-links=/var/cache/pip
+timeout = 60
+EOF
+
+    sudo cp -f ~/.pip/pip.conf /root/.pip
+    sudo cp -f ~/.pydistutils.cfg /root/
+    sudo chown root:root /root/.pip/pip.conf
+    sudo chown root:root /root/.pydistutils.cfg
+else
+    TEMPFILE=`mktemp`
+    echo "[global]
 proxy = $http_proxy" >> $TEMPFILE
-chmod 0444 $TEMPFILE
-sudo chown root:root $TEMPFILE
-mkdir -p ~/.pip/
-sudo mv -f $TEMPFILE ~/.pip/pip.conf
+    chmod 0444 $TEMPFILE
+    sudo chown root:root $TEMPFILE
+    mkdir -p ~/.pip/
+    sudo mv -f $TEMPFILE ~/.pip/pip.conf
+fi
+
 
 #./prepare_node.sh "$HOSTNAME"
 ./prepare_node_no_unbound.sh "$HOSTNAME"
