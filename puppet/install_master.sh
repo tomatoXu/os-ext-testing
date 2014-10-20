@@ -11,11 +11,11 @@ DATA_REPO_INFO_FILE=$THIS_DIR/.data_repo_info
 DATA_PATH=$THIS_DIR/os-ext-testing-data
 OSEXT_PATH=$THIS_DIR/os-ext-testing
 OSEXT_REPO=https://github.com/rasselin/os-ext-testing
-PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/config/modules:/etc/puppet/modules"
+PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/system-config/modules:/etc/puppet/modules"
 
-if ! sudo test -d /root/config; then
-  sudo git clone https://review.openstack.org/p/openstack-infra/config.git \
-    /root/config
+if ! sudo test -d /root/system-config; then
+  sudo git clone https://review.openstack.org/p/openstack-infra/system-config.git \
+    /root/system-config
 fi
 
 if ! sudo test -d /root/project-config; then
@@ -31,14 +31,14 @@ if [[ ! -e install_puppet.sh ]]; then
   sudo /bin/bash /root/config/install_modules.sh
 fi
 
-# Update /root/config
-echo "Update infra-config"
-sudo git  --work-tree=/root/config/ --git-dir=/root/config/.git remote update
-sudo git  --work-tree=/root/config/ --git-dir=/root/config/.git pull
+# Update /root/system-config
+echo "Update system-config"
+sudo git  --work-tree=/root/system-config/ --git-dir=/root/system-config/.git remote update
+sudo git  --work-tree=/root/system-config/ --git-dir=/root/system-config/.git pull
 
 echo "Update project-config"
-sudo git  --work-tree=/root/project-config/ --git-dir=/root/config/.git remote update
-sudo git  --work-tree=/root/project-config/ --git-dir=/root/config/.git pull
+sudo git  --work-tree=/root/project-config/ --git-dir=/root/project-config/.git remote update
+sudo git  --work-tree=/root/project-config/ --git-dir=/root/project-config/.git pull
 
 # Clone or pull the the os-ext-testing repository
 if [[ ! -d $OSEXT_PATH ]]; then
