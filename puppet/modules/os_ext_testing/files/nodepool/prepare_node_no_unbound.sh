@@ -39,7 +39,7 @@ sudo mv /tmp/image-hostname.txt /etc/image-hostname.txt
 if [ -f /usr/bin/yum ]; then
     sudo yum -y install wget
 fi
-wget https://git.openstack.org/cgit/openstack-infra/config/plain/install_puppet.sh
+wget https://git.openstack.org/cgit/openstack-infra/system-config/plain/install_puppet.sh
 sudo bash -xe install_puppet.sh
 
 sudo git clone --depth=1 $GIT_BASE/openstack-infra/config.git \
