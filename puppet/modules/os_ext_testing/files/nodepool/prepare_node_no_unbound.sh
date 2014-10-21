@@ -42,13 +42,13 @@ fi
 wget https://git.openstack.org/cgit/openstack-infra/system-config/plain/install_puppet.sh
 sudo bash -xe install_puppet.sh
 
-sudo git clone --depth=1 $GIT_BASE/openstack-infra/config.git \
-    /root/config
-sudo /bin/bash /root/config/install_modules.sh
+sudo git clone --depth=1 $GIT_BASE/openstack-infra/system-config.git \
+    /root/system-config
+sudo /bin/bash /root/system-config/install_modules.sh
 
 set +e
 if [ -z "$NODEPOOL_SSH_KEY" ] ; then
-    sudo puppet apply --detailed-exitcodes --modulepath=/root/config/modules:/etc/puppet/modules \
+    sudo puppet apply --detailed-exitcodes --modulepath=/root/system-config/modules:/etc/puppet/modules \
         -e "class {'openstack_project::single_use_slave':
                 sudo => $SUDO,
                 thin => $THIN,
@@ -59,7 +59,7 @@ if [ -z "$NODEPOOL_SSH_KEY" ] ; then
             }"
     PUPPET_RET_CODE=$?
 else
-    sudo puppet apply --detailed-exitcodes --modulepath=/root/config/modules:/etc/puppet/modules \
+    sudo puppet apply --detailed-exitcodes --modulepath=/root/system-config/modules:/etc/puppet/modules \
         -e "class {'openstack_project::single_use_slave':
                 install_users => false,
                 sudo => $SUDO,

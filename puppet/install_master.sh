@@ -26,7 +26,7 @@ fi
 # Install Puppet and the OpenStack Infra Config source tree
 # TODO(Ramy) Make sure sudo has http proxy settings...
 if [[ ! -e install_puppet.sh ]]; then
-  wget https://git.openstack.org/cgit/openstack-infra/config/plain/install_puppet.sh
+  wget https://git.openstack.org/cgit/openstack-infra/system-config/plain/install_puppet.sh
   sudo bash -xe install_puppet.sh
   sudo /bin/bash /root/config/install_modules.sh
 fi
