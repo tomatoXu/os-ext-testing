@@ -117,6 +117,7 @@ class logging::master(
     require => File['/srv/static/logs'],
   }
 
+  #TODO(Ramy): this is hard-coded to 120 days. Ideally it would be 30 for 3rd party ci.
   file { '/usr/local/sbin/log_archive_maintenance.sh':
     ensure => present,
     owner  => 'root',
