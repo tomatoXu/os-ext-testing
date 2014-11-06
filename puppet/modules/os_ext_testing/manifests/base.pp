@@ -18,7 +18,8 @@ class os_ext_testing::base(
   #include ssh
 
   include snmpd
-  include ntp
+  #Manage ntp externally
+  #include ntp
 
   # Install some base packages
   case $::osfamily {
