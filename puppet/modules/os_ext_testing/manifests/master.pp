@@ -367,26 +367,18 @@ class os_ext_testing::master (
         # With sourceselect => our files will take precedance when found in both
         # Our files include workarounds until some patches land in openstack/infra-config
         # As well as custom settings to ensure http proxies are taken into consideration
-        'puppet:///modules/os_ext_testing/nodepool',
+        "${data_repo_dir}/etc/nodepool/scripts",
         '/root/project-config/nodepool/scripts',
       ],
   }
 
   #Make sure http proxy environment variables are available to all users
-  file { "/etc/profile.d/set_http_proxy_env.sh":
+  file { "/etc/profile.d/set_nodepool_env.sh":
       ensure => present,
       owner  => 'root',
       group  => 'root',
       mode   => '0755',
-      content => template('os_ext_testing/nodepool/set_http_proxy_env.sh.erb'),
-  }
-
-  file { "/etc/sudoers.d/80-http-proxy":
-      ensure => present,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0440',
-      source => 'puppet:///modules/os_ext_testing/sudoers/80-http-proxy',
+      content => template('os_ext_testing/nodepool/set_nodepool_env.sh.erb'),
   }
 
   file { "/etc/sudoers.d/90-nodepool-http-proxy":
