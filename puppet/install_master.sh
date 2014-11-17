@@ -35,6 +35,8 @@ fi
 echo "Update system-config"
 sudo git  --work-tree=/root/system-config/ --git-dir=/root/system-config/.git remote update
 sudo git  --work-tree=/root/system-config/ --git-dir=/root/system-config/.git pull
+# Puppet module splits requires re-installing modules from the new location
+sudo /bin/bash /root/system-config/install_modules.sh
 
 echo "Update project-config"
 sudo git  --work-tree=/root/project-config/ --git-dir=/root/project-config/.git remote update
