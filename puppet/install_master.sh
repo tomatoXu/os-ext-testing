@@ -165,6 +165,9 @@ data_repo_dir => '$DATA_PATH',"
 if [[ -n $URL_PATTERN ]]; then
     zuul_args="$zuul_args url_pattern => '$URL_PATTERN', "
 fi
+if [[ -n $SMTP_HOST ]]; then
+    zuul_args="$zuul_args smtp_host => '$SMTP_HOST', "
+fi
 
 nodepool_args="mysql_root_password => '$MYSQL_ROOT_PASSWORD',
                mysql_password => '$MYSQL_PASSWORD',

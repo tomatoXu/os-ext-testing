@@ -12,6 +12,7 @@ class os_ext_testing::master (
   $jenkins_ssh_private_key = '',
   $jenkins_ssh_public_key = '',
   $jenkins_ssh_public_key_no_whitespace = '',
+  $smtp_host = 'localhost',
   $publish_host = 'localhost',
   $zuul_host = $::ipaddress,
   $url_pattern = "http://$publish_host/{build.parameters[LOG_PATH]}",
@@ -231,6 +232,7 @@ class os_ext_testing::master (
     #vhost_name           => "zuul",
     # TODO:Hack. Use ip address because of a vhost naming issue..?
     vhost_name           => $zuul_host,
+    smtp_host            => "$smtp_host",
     gearman_server       => $gearman_server,
     gerrit_server        => $upstream_gerrit_server,
     gerrit_user          => $upstream_gerrit_user,
