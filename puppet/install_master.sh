@@ -146,42 +146,48 @@ if [[ -z $UPSTREAM_GERRIT_SERVER ]]; then
     UPSTREAM_GERRIT_SERVER="review.openstack.org"
 fi
 
-CLASS_ARGS="jenkins_ssh_public_key => '$JENKINS_SSH_PUBLIC_KEY_CONTENTS', jenkins_ssh_private_key => '$JENKINS_SSH_PRIVATE_KEY_CONTENTS', "
-CLASS_ARGS="$CLASS_ARGS ssl_cert_file_contents => '$APACHE_SSL_CERT_FILE', ssl_key_file_contents => '$APACHE_SSL_KEY_FILE', "
-CLASS_ARGS="$CLASS_ARGS upstream_gerrit_server => '$UPSTREAM_GERRIT_SERVER', "
-CLASS_ARGS="$CLASS_ARGS upstream_gerrit_user => '$UPSTREAM_GERRIT_USER', "
-CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_private_key => '$UPSTREAM_GERRIT_SSH_PRIVATE_KEY_CONTENTS', "
-CLASS_ARGS="$CLASS_ARGS upstream_gerrit_ssh_host_key => '$UPSTREAM_GERRIT_SSH_HOST_KEY', "
+gerrit_args="upstream_gerrit_server => '$UPSTREAM_GERRIT_SERVER',
+upstream_gerrit_user => '$UPSTREAM_GERRIT_USER',
+upstream_gerrit_ssh_private_key => '$UPSTREAM_GERRIT_SSH_PRIVATE_KEY_CONTENTS',
+upstream_gerrit_ssh_host_key => '$UPSTREAM_GERRIT_SSH_HOST_KEY',"
+
 if [[ -n $UPSTREAM_GERRIT_BASEURL ]]; then
-    CLASS_ARGS="$CLASS_ARGS upstream_gerrit_baseurl => '$UPSTREAM_GERRIT_BASEURL', "
+    gerrit_args="$gerrit_args upstream_gerrit_baseurl => '$UPSTREAM_GERRIT_BASEURL', "
 fi
-CLASS_ARGS="$CLASS_ARGS git_email => '$GIT_EMAIL', git_name => '$GIT_NAME', "
-CLASS_ARGS="$CLASS_ARGS publish_host => '$PUBLISH_HOST', "
-CLASS_ARGS="$CLASS_ARGS data_repo_dir => '$DATA_PATH', "
+
+apache_args="ssl_cert_file_contents => '$APACHE_SSL_CERT_FILE',
+             ssl_key_file_contents => '$APACHE_SSL_KEY_FILE', "
+
+zuul_args="git_email => '$GIT_EMAIL',
+git_name => '$GIT_NAME',
+publish_host => '$PUBLISH_HOST',
+data_repo_dir => '$DATA_PATH',"
 if [[ -n $URL_PATTERN ]]; then
-    CLASS_ARGS="$CLASS_ARGS url_pattern => '$URL_PATTERN', "
+    zuul_args="$zuul_args url_pattern => '$URL_PATTERN', "
 fi
 
-CLASS_ARGS="$CLASS_ARGS mysql_root_password => '$MYSQL_ROOT_PASSWORD', "
-CLASS_ARGS="$CLASS_ARGS mysql_password => '$MYSQL_PASSWORD', "
+nodepool_args="mysql_root_password => '$MYSQL_ROOT_PASSWORD',
+               mysql_password => '$MYSQL_PASSWORD',
+               provider_username => '$PROVIDER_USERNAME',
+               provider_password => '$PROVIDER_PASSWORD',
+               provider_image_name => '$PROVIDER_IMAGE_NAME',"
 
-CLASS_ARGS="$CLASS_ARGS provider_username => '$PROVIDER_USERNAME', "
-CLASS_ARGS="$CLASS_ARGS provider_password => '$PROVIDER_PASSWORD', "
-CLASS_ARGS="$CLASS_ARGS provider_image_name => '$PROVIDER_IMAGE_NAME', "
 if [[ -n $PROVIDER_IMAGE_SETUP_SCRIPT_NAME ]]; then
-    CLASS_ARGS="$CLASS_ARGS provider_image_setup_script_name => '$PROVIDER_IMAGE_SETUP_SCRIPT_NAME', "
+    nodepool_args="$nodepool_args provider_image_setup_script_name => '$PROVIDER_IMAGE_SETUP_SCRIPT_NAME', "
 fi
 
-CLASS_ARGS="$CLASS_ARGS jenkins_api_user => '$JENKINS_API_USER', "
-CLASS_ARGS="$CLASS_ARGS jenkins_api_key => '$JENKINS_API_KEY', "
-CLASS_ARGS="$CLASS_ARGS jenkins_credentials_id => '$JENKINS_CREDENTIALS_ID', "
-CLASS_ARGS="$CLASS_ARGS jenkins_ssh_public_key_no_whitespace => '$JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE', "
+jenkins_args="jenkins_ssh_public_key => '$JENKINS_SSH_PUBLIC_KEY_CONTENTS',
+              jenkins_ssh_private_key => '$JENKINS_SSH_PRIVATE_KEY_CONTENTS',
+              jenkins_api_user => '$JENKINS_API_USER',
+              jenkins_api_key => '$JENKINS_API_KEY',
+              jenkins_credentials_id => '$JENKINS_CREDENTIALS_ID',
+              jenkins_ssh_public_key_no_whitespace => '$JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE',"
 
+proxy_args="http_proxy => '$HTTP_PROXY',
+            https_proxy => '$HTTPS_PROXY',
+            no_proxy => '$NO_PROXY',"
 
-CLASS_ARGS="$CLASS_ARGS http_proxy => '$HTTP_PROXY', "
-CLASS_ARGS="$CLASS_ARGS https_proxy => '$HTTPS_PROXY', "
-CLASS_ARGS="$CLASS_ARGS no_proxy => '$NO_PROXY', "
-
+CLASS_ARGS="$gerrit_args $apache_args $zuul_args $nodepool_args $jenkins_args $proxy_args"
 sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::master': $CLASS_ARGS }"
 
 #Not sure why nodepool private key is not getting set in the puppet scripts
