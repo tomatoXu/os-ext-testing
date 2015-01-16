@@ -15,10 +15,6 @@ running a variety of OpenStack integration tests easy.
 
 Currently only Puppet modules are complete and tested. 
 
-Ubuntu 12.04 was used and tested and is recommended.
-Upstream puppet scripts used do not support Ubuntu 14.04: You'll get an 
-error installing Apache.
-
 
 ## Pre-requisites
 
@@ -76,7 +72,7 @@ data repository:
    Once you do the above, copy the `jenkins_key` and `jenkins_key.pub` files into your
    data repository.
 
-3. Open up `vars.sh` in an editor.
+3. Copy the vars.sh.sample to vars.sh and open up `vars.sh` in an editor.
 
 4. Change the value of the `$UPSTREAM_GERRIT_USER` shell
    variable to the Gerrit username you registered with the upstream OpenStack Infrastructure
@@ -92,6 +88,9 @@ data repository:
 6. If for some reason, in step #2 above, you either used a different output filename than `jenkins_key` or put the
    key pair into some subdirectory of your data repository, then change the value of the `$JENKINS_SSH_KEY_PATH`
    variable in `vars.sh` to an appropriate value.
+
+7. Copy etc/nodepool/nodepool.yaml.erb.sample to etc/nodepool/nodepool.yaml.erb. Adjust as needed according to docs: http://ci.openstack.org/nodepool/configuration.html.  
+8. Update etc/zuul/layout.yaml according to docs: http://ci.openstack.org/zuul/zuul.html#layout-yaml
 
 ## Usage
 
