@@ -222,15 +222,14 @@ class os_ext_testing::master (
 
   #TODO(Restart Jenkins)
 
-  class { '::zuul':
-    #vhost_name           => "zuul",
-    # TODO:Hack. Use ip address because of a vhost naming issue..?
+  class { 'os_ext_testing::zuul':
     vhost_name           => $zuul_host,
-    smtp_host            => "$smtp_host",
+    smtp_host            => $smtp_host,
     gearman_server       => $gearman_server,
     gerrit_server        => $upstream_gerrit_server,
     gerrit_user          => $upstream_gerrit_user,
     gerrit_baseurl       => $upstream_gerrit_baseurl,
+    gerrit_ssh_host_key => "${upstream_gerrit_ssh_host_key}",
     zuul_ssh_private_key => $upstream_gerrit_ssh_private_key,
     url_pattern          => $url_pattern,
     zuul_url             => "http://$zuul_host/p/",
@@ -238,93 +237,20 @@ class os_ext_testing::master (
     status_url           => "http://$zuul_host",
     statsd_host          => $statsd_host,
     git_email            => $git_email,
-    git_name             => $git_name
+    git_name             => $git_name,
+    layout_dir  => ["${data_repo_dir}/etc/zuul/",]
   }
 
-  class { '::zuul::server':
-    layout_dir  => [
-        "${data_repo_dir}/etc/zuul/",
-      ]
-  }
-  class { '::zuul::merger': }
-
-
-  if $upstream_gerrit_ssh_host_key != '' {
-    file { '/home/zuul/.ssh':
-      ensure  => directory,
-      owner   => 'zuul',
-      group   => 'zuul',
-      mode    => '0700',
-      require => Class['::zuul'],
-    }
-    file { '/home/zuul/.ssh/known_hosts':
-      ensure  => present,
-      owner   => 'zuul',
-      group   => 'zuul',
-      mode    => '0600',
-      ## http://git.openstack.org/cgit/openstack-infra/config/tree/modules/openstack_project/manifests/zuul_prod.pp#n70
-      content => "${upstream_gerrit_ssh_host_key}",
-      replace => true,
-      require => File['/home/zuul/.ssh'],
-    }
-    file { '/home/zuul/.ssh/config':
-      ensure  => present,
-      owner   => 'zuul',
-      group   => 'zuul',
-      mode    => '0700',
-      require => File['/home/zuul/.ssh'],
-      source  => 'puppet:///modules/jenkins/ssh_config',
-    }
-  }
-
-  # We need to make sure the configuration is correct before reloading zuul
-  exec { 'zuul-check-reload':
-    command     => '/usr/local/bin/zuul-server -t',
-    logoutput   => on_failure,
-    require     => File['/etc/init.d/zuul'],
-    refreshonly => true,
-    notify => Exec['zuul-reload'],
-  }
-
-  file { '/etc/zuul/layout/openstack_functions.py':
-    ensure => present,
-    source  => 'puppet:///modules/os_ext_testing/zuul/openstack_functions.py',
-    notify => Exec['zuul-check-reload'],
-  }
-
-  file { '/etc/zuul/logging.conf':
-    ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/logging.conf',
-    notify => Exec['zuul-check-reload'],
-  }
-
-  file { '/etc/zuul/gearman-logging.conf':
-    ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/gearman-logging.conf',
-    notify => Exec['zuul-check-reload'],
-  }
-  
-  file { '/etc/zuul/merger-logging.conf':
-    ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/merger-logging.conf',
-  }
-
-  #TODO(Ramy) err: /Stage[main]/Recheckwatch/File[/var/www/recheckwatch]/ensure:
-  #change from absent to directory failed: Cannot create
-  #/var/www/recheckwatch; parent directory /var/www does not exist
-  # Note: It does exist...perhaps created later in the script
-
-  class { '::recheckwatch':
-    gerrit_server                => $upstream_gerrit_server,
-    gerrit_user                  => $upstream_gerrit_user,
-    recheckwatch_ssh_private_key => $upstream_gerrit_ssh_private_key,
-  }
-
-  file { '/var/lib/recheckwatch/scoreboard.html':
-    ensure  => present,
-    source  => 'puppet:///modules/openstack_project/zuul/scoreboard.html',
-    require => File['/var/lib/recheckwatch'],
-  }
+# TODO: Why use the Jenkins ssh_config also for zuul ?
+# Upstream doesn't do this, so let's take it out.
+#  file { '/home/zuul/.ssh/config':
+#    ensure  => present,
+#    owner   => 'zuul',
+#    group   => 'zuul',
+#    mode    => '0700',
+#    require => File['/home/zuul/.ssh'],
+#    source  => 'puppet:///modules/jenkins/ssh_config',
+#  }
 
   class { '::nodepool':
     mysql_root_password      => $mysql_root_password,
