@@ -243,14 +243,14 @@ class os_ext_testing::master (
 
 # TODO: Why use the Jenkins ssh_config also for zuul ?
 # Upstream doesn't do this, so let's take it out.
-#  file { '/home/zuul/.ssh/config':
-#    ensure  => present,
-#    owner   => 'zuul',
-#    group   => 'zuul',
-#    mode    => '0700',
-#    require => File['/home/zuul/.ssh'],
-#    source  => 'puppet:///modules/jenkins/ssh_config',
-#  }
+  file { '/home/zuul/.ssh/config':
+    ensure  => present,
+    owner   => 'zuul',
+    group   => 'zuul',
+    mode    => '0700',
+    require => File['/home/zuul/.ssh'],
+    source  => 'puppet:///modules/jenkins/ssh_config',
+  }
 
   class { '::nodepool':
     mysql_root_password      => $mysql_root_password,
