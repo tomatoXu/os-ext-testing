@@ -104,18 +104,6 @@ class os_ext_testing::zuul(
     source => 'puppet:///modules/openstack_project/zuul/merger-logging.conf',
   }
 
-  class { '::recheckwatch':
-    gerrit_server                => $gerrit_server,
-    gerrit_user                  => $gerrit_user,
-    recheckwatch_ssh_private_key => $zuul_ssh_private_key,
-  }
-
-  file { '/var/lib/recheckwatch/scoreboard.html':
-    ensure  => present,
-    source  => 'puppet:///modules/openstack_project/zuul/scoreboard.html',
-    require => File['/var/lib/recheckwatch'],
-  }
-
   #TODO: Openstack doesn't have this here. Find out why.
   file { '/etc/zuul/layout/openstack_functions.py':
     ensure => present,
