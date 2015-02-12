@@ -20,11 +20,13 @@ Currently only Puppet modules are complete and tested.
 
 The following are pre-requisite steps before you install anything:
 
-1. Get a Gerrit account for your testing system registered
+1. Read the official documentation: http://ci.openstack.org/third_party.html
 
-2. Ensure base packages installed on your target hosts/VMs
+2. Get a Gerrit account for your testing system registered
 
-3. Set up your data repository
+3. Ensure base packages installed on your target hosts/VMs
+
+4. Set up your data repository
 
 Below are detailed instructions for each step.
 
