@@ -6,14 +6,9 @@ class os_ext_testing::devstack_slave (
   $certname = $::fqdn,
   $ssh_key = '',
   $sysadmins = [],
-  $python3 = false,
-  $include_pypy = false,
 ) {
   include os_ext_testing::base
-  #TODO: Is including this an issue?
-  #include devstack_host
   include openstack_project
-  include openstack_project::automatic_upgrades
   include openstack_project::tmpcleanup
 
   #class { 'openstack_project::server':
@@ -24,7 +19,6 @@ class os_ext_testing::devstack_slave (
 
   class { 'jenkins::slave':
     ssh_key      => $ssh_key,
-    python3      => $python3,
   }
 
   include jenkins::cgroups
@@ -36,9 +30,7 @@ class os_ext_testing::devstack_slave (
     limit_value  => '256'
   }
 
-  class { 'openstack_project::slave_common':
-    include_pypy => $include_pypy,
-  }
+  include openstack_project::slave_common
 
   if (! $thin) {
     include openstack_project::thick_slave
