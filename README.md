@@ -156,7 +156,7 @@ couple manual configuration steps in the Jenkins UI.
 
 5. Click the "Test Connection" button and verify Jenkins connects to Gearman.
 6. Scroll to "ZMQ Event Publisher" and select "Enable on all Jobs". Double-check
- the port matches the configure in `$DATA_REPO/etc/nodepool/nodepool.erb`
+ the port matches the URL configured for "zmq-publishers" in `$DATA_REPO/etc/nodepool/nodepool.yaml.erb`
 
 7. Scroll down to the bottom of the page and click `Save`
 
