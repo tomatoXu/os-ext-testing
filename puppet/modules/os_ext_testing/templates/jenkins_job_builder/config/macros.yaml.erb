@@ -98,6 +98,17 @@
           echo "Detailed logs: http://<%= @log_root_url %>/$LOG_PATH/"
 
 - publisher:
+    name: coverage-log
+    publishers:
+      - scp:
+          site: 'LogServer'
+          files:
+            - target: 'logs/$LOG_PATH'
+              source: 'cover/**'
+              keep-hierarchy: true
+              copy-after-failure: true
+
+- publisher:
     name: console-log
     publishers:
       - scp:
