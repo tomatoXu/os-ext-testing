@@ -100,6 +100,8 @@ else
     JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE=`sudo cat $DATA_PATH/$JENKINS_SSH_KEY_PATH.pub | cut -d' ' -f 2`
 fi
 
+echo '[' $JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE ']'
+
 # Copy over the nodepool template
 if [[ ! -e "$DATA_PATH/etc/nodepool/nodepool.yaml.erb" ]]; then
     echo "Expected to find nodepool template at $DATA_PATH/etc/nodepool/nodepool.yaml.erb, but wasn't found. Please create this using the sample provided. Exiting."
@@ -186,6 +188,8 @@ jenkins_args="jenkins_ssh_public_key => '$JENKINS_SSH_PUBLIC_KEY_CONTENTS',
               jenkins_api_key => '$JENKINS_API_KEY',
               jenkins_credentials_id => '$JENKINS_CREDENTIALS_ID',
               jenkins_ssh_public_key_no_whitespace => '$JENKINS_SSH_PUBLIC_KEY_NO_WHITESPACE',"
+
+echo '[' $jenkins_args ']'
 
 proxy_args="http_proxy => '$HTTP_PROXY',
             https_proxy => '$HTTPS_PROXY',
