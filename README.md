@@ -174,7 +174,7 @@ couple manual configuration steps in the Jenkins UI.
 3. Start nodepool:
    ```
    sudo su - nodepool
-   source /etc/nodepool/default
+   source /etc/default/nodepool
    nodepoold -d $DAEMON_ARGS
    ```
     TODO(Ramy) why does sudo service nodepool not work?
