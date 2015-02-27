@@ -10,7 +10,8 @@ THIS_DIR=`pwd`
 DATA_REPO_INFO_FILE=$THIS_DIR/.data_repo_info
 DATA_PATH=$THIS_DIR/os-ext-testing-data
 OSEXT_PATH=$THIS_DIR/os-ext-testing
-OSEXT_REPO=https://github.com/rasselin/os-ext-testing
+OSEXT_REPO=https://github.com/clarktlaugh/os-ext-testing
+OSEXT_BRANCH=ssh-key-patch
 PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/system-config/modules:/etc/puppet/modules"
 
 if ! sudo test -d /root/system-config; then
@@ -45,12 +46,12 @@ sudo git  --work-tree=/root/project-config/ --git-dir=/root/project-config/.git 
 # Clone or pull the the os-ext-testing repository
 if [[ ! -d $OSEXT_PATH ]]; then
     echo "Cloning os-ext-testing repo..."
-    git clone $OSEXT_REPO $OSEXT_PATH
+    git clone -b $OSEXT_BRANCH $OSEXT_REPO $OSEXT_PATH
 fi
 
 if [[ "$PULL_LATEST_OSEXT_REPO" == "1" ]]; then
     echo "Pulling latest os-ext-testing repo master..."
-    cd $OSEXT_PATH; git checkout master && sudo git pull; cd $THIS_DIR
+    cd $OSEXT_PATH; git checkout $OSEXT_BRANCH && sudo git pull; cd $THIS_DIR
 fi
 
 if [[ ! -e $DATA_PATH ]]; then
