@@ -66,23 +66,28 @@
     builders:
       - shell: |
           #!/bin/bash -xe
-          sudo mkdir -p ~/.pip/
           echo "Using pypi mirror  http://pypi.gozer.hpcloud.net/openstack/latest"
           cat <<EOF > ~/.pydistutils.cfg
           [easy_install]
-          index_url = http://pypi.gozer.hpcloud.net/openstack/latest
-          find_links = /var/cache/pip
+          index_url = http://pypi.gozer.hpcloud.net/latest
           EOF
 
+          sudo mkdir -p ~/.pip/
           cat <<EOF > ~/.pip/pip.conf
           [global]
           proxy = http://proxy.houston.hp.com:8080/
-          index-url = http://pypi.gozer.hpcloud.net/openstack/latest
+          index-url = http://pypi.gozer.hpcloud.net/latest
           extra-index-url = http://pypi.python.org/simple
-          find-links = /var/cache/pip
-          timeout = 60
+          timeout = 90
+
+          [install]
+          trusted-host=
+              pypi.gozer.hpcloud.net
+              pypi.python.org
           EOF
-          sudo mkdir -p /var/cache/pip
+
+          # Make sure the top level pip configuration also has this file
+          sudo cp ~/.pip/pip.conf /etc/pip.conf
 
 - builder:
     name: link-logs
