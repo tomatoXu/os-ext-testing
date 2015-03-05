@@ -10,8 +10,8 @@ THIS_DIR=`pwd`
 DATA_REPO_INFO_FILE=$THIS_DIR/.data_repo_info
 DATA_PATH=$THIS_DIR/os-ext-testing-data
 OSEXT_PATH=$THIS_DIR/os-ext-testing
-OSEXT_REPO=https://github.com/clarktlaugh/os-ext-testing
-OSEXT_BRANCH=ssh-key-patch
+OSEXT_REPO=https://github.com/rasselin/os-ext-testing
+OSEXT_BRANCH=master
 PUPPET_MODULE_PATH="--modulepath=$OSEXT_PATH/puppet/modules:/root/system-config/modules:/etc/puppet/modules"
 
 if ! sudo test -d /root/system-config; then
