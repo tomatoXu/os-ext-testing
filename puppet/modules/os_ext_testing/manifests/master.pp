@@ -287,10 +287,30 @@ class os_ext_testing::master (
     sourceselect => all,
     source  => [
         # With sourceselect => our files will take precedance when found in both
-        # Our files include workarounds until some patches land in openstack/infra-config
+        # Our files include workarounds until some patches land in openstack/project-config
         # As well as custom settings to ensure http proxies are taken into consideration
         "${data_repo_dir}/etc/nodepool/scripts",
         '/root/project-config/nodepool/scripts',
+      ],
+  }
+
+  file { '/etc/nodepool/elements':
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    recurse => true,
+    purge   => true,
+    force   => true,
+    require => File['/etc/nodepool'],
+    sourceselect => all,
+    source  => [
+        # With sourceselect => our files will take precedance when found in both
+        # To ignore a file in project-config, simply create an empty file of the same name.
+        # To modify a file in project-config, include the modified copy in the data repo.
+        # New files automatically get pulled in using the disk-image-builder
+        "${data_repo_dir}/etc/nodepool/elements",
+        '/root/project-config/nodepool/elements',
       ],
   }
 
