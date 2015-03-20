@@ -243,6 +243,9 @@ The Log server is a simple VM with an Apache web server installed that provides 
 
 It's configuration uses the openstack-infra scripts, which provide the friendly log filtering features, hightlighting, the line references, etc.
 
+Upstream doesn't currently support Ubuntu 14.04/Apache 2.4. Workaround is to cherry pick this patch or apply it manually to /etc/apache2/sites-enabled/*.conf:
+https://review.openstack.org/#/c/164889/
+
 For simplicity, it is recommended to use the same jenkins key for authentication.
 
 ```
