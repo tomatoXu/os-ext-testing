@@ -132,6 +132,7 @@ class os_ext_testing::master (
 #Until then, see instructions here:
 #http://lists.openstack.org/pipermail/openstack-infra/2013-December/000568.html
 #Or use 1.8 which doesn't have all the features
+#Or download the pre-built version here: http://tarballs.openstack.org/ci/scp.jpi
 #jenkins::plugin { 'scp':
 #  version => '1.8',
 #}
