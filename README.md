@@ -241,28 +241,17 @@ Jenkins master. To do so manually, follow these steps:
 
 The Log server is a simple VM with an Apache web server installed that provides http access to all the log files uploaded by the jenkins jobs. It is a separate script because the jenkins-zuul-nodepool 'master' server may/can not be publicly accessible for security reasons. In addition, separating out the log server as its own server relaxes the disk space requirements needed by the jenkins master. 
 
-It's configuration uses the openstack-infra scripts, which provide the friendly log filtering features, hightlighting, the line references, etc.
-
-Upstream doesn't currently support Ubuntu 14.04/Apache 2.4. Workaround is to cherry pick this patch or apply it manually to /etc/apache2/sites-enabled/*.conf:
-https://review.openstack.org/#/c/164889/
+It's configuration uses the puppet-openstackci scripts, which provide the friendly log filtering features, hightlighting, the line references, etc.
 
 For simplicity, it is recommended to use the same jenkins key for authentication.
 
 ```
 wget https://raw.githubusercontent.com/rasselin/os-ext-testing/master/puppet/install_log_server.sh
+export DOMAIN=your.domain.com
+export JENKINS_SSH_PUBLIC_KEY=/full/path/to/public/key
 #MANUALLY Update the LOG_SERVER_DOMAIN & JENKINS_SSH_PUBLIC_KEY_CONTENTS variables
 bash install_log_server.sh
 ```
 
-Bug: 
-```
-err: /Stage[main]/Logging::Master/Exec[install_os-loganalyze]: Failed to call refresh: python setup.py install returned 1 instead of one of [0] at /home/stack/os-ext-testing/puppet/modules/logging/manifests/master.pp:89
-```
-Workaround:
-```
-cd /opt/os-loganalyze
-sudo python setup.py install
-```
- 
 When completed, the jenkins user will be able to upload files to /srv/static/logs, which Apache will serve via http.
 
