@@ -172,6 +172,9 @@ class os_ext_testing::master (
   jenkins::plugin { 'rebuild':
     version => '1.14',
   }
+  jenkins::plugin { 'postbuildscript':
+    version => '0.17',
+  }
 
   file { '/var/lib/jenkins/.ssh/config':
     ensure  => present,
