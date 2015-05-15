@@ -212,14 +212,6 @@ class os_ext_testing::master (
         notify  => Exec['jenkins_jobs_update'],
       }
     }
-
-    file { '/etc/default/jenkins':
-      ensure => present,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0644',
-      source => 'puppet:///modules/openstack_project/jenkins/jenkins.default',
-    }
   }
 
 
