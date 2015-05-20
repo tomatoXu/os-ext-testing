@@ -59,12 +59,14 @@ class os_ext_testing::zuul(
 
   if $project_config_repo != '' {
     class { '::zuul::server':
-      layout_dir => $::project_config::zuul_layout_dir,
-      require    => $::project_config::config_dir,
+      layout_dir      => $::project_config::zuul_layout_dir,
+      require         => $::project_config::config_dir,
+      manage_log_conf => true,
     }
   } else {
     class { '::zuul::server':
-      layout_dir  => $layout_dir,
+      layout_dir      => $layout_dir,
+      manage_log_conf => true,
     }
   }
 
@@ -85,23 +87,6 @@ class os_ext_testing::zuul(
       replace => true,
       require => File['/home/zuul/.ssh'],
     }
-  }
-
-  file { '/etc/zuul/logging.conf':
-    ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/logging.conf',
-    notify => Exec['zuul-check-reload'],
-  }
-
-  file { '/etc/zuul/gearman-logging.conf':
-    ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/gearman-logging.conf',
-    notify => Exec['zuul-check-reload'],
-  }
-
-  file { '/etc/zuul/merger-logging.conf':
-    ensure => present,
-    source => 'puppet:///modules/openstack_project/zuul/merger-logging.conf',
   }
 
   #TODO: Openstack doesn't have this here. Find out why.
