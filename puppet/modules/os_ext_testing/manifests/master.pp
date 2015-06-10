@@ -6,6 +6,7 @@ class os_ext_testing::master (
   $vhost_name = $::fqdn,
   $data_repo_dir = '',
   $manage_jenkins_jobs = true,
+  $serveradmin = "webmaster@${::fqdn}",
   $ssl_cert_file_contents = '',
   $ssl_key_file_contents = '',
   $ssl_chain_file_contents = '',
@@ -88,8 +89,9 @@ class os_ext_testing::master (
     shell  => '/bin/bash',
   }
 
-  class { '::jenkins::master':
+  class { 'openstackci::jenkins_master':
     vhost_name              => "jenkins",
+    serveradmin             => $serveradmin,
     logo                    => 'openstack.png',
     ssl_cert_file           => "/etc/ssl/certs/jenkins.pem",
     ssl_key_file            => "/etc/ssl/private/jenkins.key",
@@ -101,79 +103,9 @@ class os_ext_testing::master (
     jenkins_ssh_public_key  => $jenkins_ssh_public_key,
   }
 
-  jenkins::plugin { 'build-timeout':
-    version => '1.14',
-  }
-  jenkins::plugin { 'copyartifact':
-    version => '1.22',
-  }
-  jenkins::plugin { 'dashboard-view':
-    version => '2.3',
-  }
-  jenkins::plugin { 'envinject':
-    version => '1.70',
-  }
-  jenkins::plugin { 'gearman-plugin':
-    version => '0.0.7',
-  }
-  jenkins::plugin { 'git':
-    version => '1.1.23',
-  }
-  jenkins::plugin { 'greenballs':
-    version => '1.12',
-  }
-  jenkins::plugin { 'extended-read-permission':
-    version => '1.0',
-  }
-  jenkins::plugin { 'zmq-event-publisher':
-    version => '0.0.3',
-  }
-#TODO: When version 1.9 is release, uncomment.
-#Until then, see instructions here:
-#http://lists.openstack.org/pipermail/openstack-infra/2013-December/000568.html
-#Or use 1.8 which doesn't have all the features
-#Or download the pre-built version here: http://tarballs.openstack.org/ci/scp.jpi
-#jenkins::plugin { 'scp':
-#  version => '1.8',
-#}
-#  TODO(jeblair): release
-#  jenkins::plugin { 'scp':
-#    version => '1.9',
-#  }
-  jenkins::plugin { 'jobConfigHistory':
-    version => '1.13',
-  }
-  jenkins::plugin { 'monitoring':
-    version => '1.40.0',
-  }
-  jenkins::plugin { 'nodelabelparameter':
-    version => '1.2.1',
-  }
-  jenkins::plugin { 'notification':
-    version => '1.4',
-  }
-  jenkins::plugin { 'openid':
-    version => '1.5',
-  }
-  jenkins::plugin { 'publish-over-ftp':
-    version => '1.7',
-  }
-  jenkins::plugin { 'simple-theme-plugin':
-    version => '0.2',
-  }
-  jenkins::plugin { 'timestamper':
-    version => '1.3.1',
-  }
-  jenkins::plugin { 'token-macro':
-    version => '1.5.1',
-  }
-
 #Extra, not part of openstack upstream:
   jenkins::plugin { 'rebuild':
     version => '1.14',
-  }
-  jenkins::plugin { 'postbuildscript':
-    version => '0.17',
   }
 
   file { '/var/lib/jenkins/.ssh/config':
