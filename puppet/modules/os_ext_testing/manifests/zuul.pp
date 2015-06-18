@@ -69,6 +69,10 @@ class os_ext_testing::zuul(
       manage_log_conf => true,
     }
   }
+  
+  class { '::zuul::merger':
+    manage_log_conf => true,
+  }
 
   if $gerrit_ssh_host_key != '' {
     file { '/home/zuul/.ssh':
