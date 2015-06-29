@@ -133,17 +133,6 @@ class os_ext_testing::master (
       content => template('os_ext_testing/jenkins_job_builder/config/macros.yaml.erb'),
       notify  => Exec['jenkins_jobs_update'],
     }
-
-    if $enable_fc != false {
-      file { '/etc/jenkins_jobs/config/macros-fc.yaml':
-        ensure => present,
-        owner  => 'root',
-        group  => 'root',
-        mode   => '0755',
-        content => template('os_ext_testing/jenkins_job_builder/config/macros-fc.yaml.erb'),
-        notify  => Exec['jenkins_jobs_update'],
-      }
-    }
   }
 
 
