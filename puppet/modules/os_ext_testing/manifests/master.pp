@@ -45,40 +45,6 @@ class os_ext_testing::master (
   $no_proxy = '',
 ) {
   include os_ext_testing::base
-  include apache
-  include pip
-
-  package { 'tox>=1.6,<1.7':
-    ensure   => present,
-    provider => pip,
-    require  => Class['pip'],
-  }
-
-  # Note that we need to do this here, once instead of in the jenkins::master
-  # module because zuul also defines these resource blocks and Puppet barfs.
-  # Upstream probably never noticed this because they do not deploy Zuul and
-  # Jenkins on the same node...
-  a2mod { 'rewrite':
-    ensure => present,
-  }
-  a2mod { 'proxy':
-    ensure => present,
-  }
-  a2mod { 'proxy_http':
-    ensure => present,
-  }
-
-  #TODO:  sudo usermod -d /var/lib/jenkins jenkins
-
-  group { 'jenkins' :
-    ensure => present,
-  }
-
-  user { 'jenkins' :
-    ensure => present,
-    home   => '/var/lib/jenkins',
-    shell  => '/bin/bash',
-  }
 
   class { 'openstackci::jenkins_master':
     vhost_name              => "jenkins",
@@ -88,19 +54,13 @@ class os_ext_testing::master (
     jenkins_ssh_public_key  => $jenkins_ssh_public_key,
   }
 
-#Extra, not part of openstack upstream:
+  #Extra, not part of openstack upstream:
   jenkins::plugin { 'rebuild':
     version => '1.14',
   }
 
-  file { '/var/lib/jenkins/.ssh/config':
-    ensure  => present,
-    owner   => 'jenkins',
-    group   => 'jenkins',
-    mode    => '0640',
-    require => File['/var/lib/jenkins/.ssh'],
-    source  => 'puppet:///modules/jenkins/ssh_config',
-  }
+  #TODO: Restart jenkins after plugins are installed
+  #TODO: Ensure Jenkins is started before loading jenkins jobs
 
   if $manage_jenkins_jobs == true {
     class { '::jenkins::job_builder':
@@ -119,10 +79,6 @@ class os_ext_testing::master (
       notify  => Exec['jenkins_jobs_update'],
     }
   }
-
-
-
-  #TODO(Restart Jenkins)
 
   class { 'os_ext_testing::zuul':
     vhost_name           => $zuul_host,
