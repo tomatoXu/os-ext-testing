@@ -111,39 +111,6 @@ fi
 
 PUBLISH_HOST=${PUBLISH_HOST:-localhost}
 
-# Create a self-signed SSL certificate for use in Apache
-APACHE_SSL_ROOT_DIR=$THIS_DIR/tmp/apache/ssl
-if [[ ! -e $APACHE_SSL_ROOT_DIR/new.ssl.csr ]]; then
-    echo "Creating self-signed SSL certificate for Apache"
-    mkdir -p $APACHE_SSL_ROOT_DIR
-    cd $APACHE_SSL_ROOT_DIR
-    echo '
-[ req ]
-default_bits            = 2048
-default_keyfile         = new.key.pem
-default_md              = default
-prompt                  = no
-distinguished_name      = distinguished_name
-
-[ distinguished_name ]
-countryName             = US
-stateOrProvinceName     = CA
-localityName            = Sunnyvale
-organizationName        = OpenStack
-organizationalUnitName  = OpenStack
-commonName              = localhost
-emailAddress            = openstack@openstack.org
-' > ssl_req.conf
-    # Create the certificate signing request
-    openssl req -new -config ssl_req.conf -nodes > new.ssl.csr
-    # Generate the certificate from the CSR
-    openssl rsa -in new.key.pem -out new.cert.key
-    openssl x509 -in new.ssl.csr -out new.cert.cert -req -signkey new.cert.key -days 3650
-    cd $THIS_DIR
-fi
-APACHE_SSL_CERT_FILE=`cat $APACHE_SSL_ROOT_DIR/new.cert.cert`
-APACHE_SSL_KEY_FILE=`cat $APACHE_SSL_ROOT_DIR/new.cert.key`
-
 if [[ -z $UPSTREAM_GERRIT_SERVER ]]; then
     UPSTREAM_GERRIT_SERVER="review.openstack.org"
 fi
@@ -156,9 +123,6 @@ upstream_gerrit_ssh_host_key => '$UPSTREAM_GERRIT_SSH_HOST_KEY',"
 if [[ -n $UPSTREAM_GERRIT_BASEURL ]]; then
     gerrit_args="$gerrit_args upstream_gerrit_baseurl => '$UPSTREAM_GERRIT_BASEURL', "
 fi
-
-apache_args="ssl_cert_file_contents => '$APACHE_SSL_CERT_FILE',
-             ssl_key_file_contents => '$APACHE_SSL_KEY_FILE', "
 
 zuul_args="git_email => '$GIT_EMAIL',
 git_name => '$GIT_NAME',
@@ -192,7 +156,7 @@ proxy_args="http_proxy => '$HTTP_PROXY',
             https_proxy => '$HTTPS_PROXY',
             no_proxy => '$NO_PROXY',"
 
-CLASS_ARGS="$gerrit_args $apache_args $zuul_args $nodepool_args $jenkins_args $proxy_args"
+CLASS_ARGS="$gerrit_args $zuul_args $nodepool_args $jenkins_args $proxy_args"
 sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::master': $CLASS_ARGS }"
 
 #Not sure why nodepool private key is not getting set in the puppet scripts

@@ -7,9 +7,6 @@ class os_ext_testing::master (
   $data_repo_dir = '',
   $manage_jenkins_jobs = true,
   $serveradmin = "webmaster@${::fqdn}",
-  $ssl_cert_file_contents = '',
-  $ssl_key_file_contents = '',
-  $ssl_chain_file_contents = '',
   $jenkins_ssh_private_key = '',
   $jenkins_ssh_public_key = '',
   $jenkins_ssh_public_key_no_whitespace = '',
@@ -71,12 +68,6 @@ class os_ext_testing::master (
     ensure => present,
   }
 
-  if $ssl_chain_file_contents != '' {
-    $ssl_chain_file = '/etc/ssl/certs/intermediate.pem'
-  } else {
-    $ssl_chain_file = ''
-  }
-
   #TODO:  sudo usermod -d /var/lib/jenkins jenkins
 
   group { 'jenkins' :
@@ -93,12 +84,6 @@ class os_ext_testing::master (
     vhost_name              => "jenkins",
     serveradmin             => $serveradmin,
     logo                    => 'openstack.png',
-    ssl_cert_file           => "/etc/ssl/certs/jenkins.pem",
-    ssl_key_file            => "/etc/ssl/private/jenkins.key",
-    ssl_chain_file          => $ssl_chain_file,
-    ssl_cert_file_contents  => $ssl_cert_file_contents,
-    ssl_key_file_contents   => $ssl_key_file_contents,
-    ssl_chain_file_contents => $ssl_chain_file_contents,
     jenkins_ssh_private_key => $jenkins_ssh_private_key,
     jenkins_ssh_public_key  => $jenkins_ssh_public_key,
   }
