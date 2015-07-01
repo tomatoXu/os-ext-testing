@@ -135,6 +135,13 @@ if [[ -n $SMTP_HOST ]]; then
     zuul_args="$zuul_args smtp_host => '$SMTP_HOST', "
 fi
 
+if [[ -n $PROJECT_CONFIG ]]; then
+    zuul_args="$zuul_args project_config_repo => '$PROJECT_CONFIG', "
+else
+    echo "This repo now requires the use of project-config. See the README.md for the simple instructions to use that."
+    exit 1
+fi
+
 nodepool_args="mysql_root_password => '$MYSQL_ROOT_PASSWORD',
                mysql_password => '$MYSQL_PASSWORD',
                provider_username => '$PROVIDER_USERNAME',
@@ -159,5 +166,3 @@ proxy_args="http_proxy => '$HTTP_PROXY',
 CLASS_ARGS="$gerrit_args $zuul_args $nodepool_args $jenkins_args $proxy_args"
 sudo puppet apply --verbose $PUPPET_MODULE_PATH -e "class {'os_ext_testing::master': $CLASS_ARGS }"
 
-#Not sure why nodepool private key is not getting set in the puppet scripts
-sudo cp  $DATA_PATH/$JENKINS_SSH_KEY_PATH /home/nodepool/.ssh/id_rsa

@@ -40,6 +40,7 @@ class os_ext_testing::master (
   # which is the private key used by the jenkins master to log into the jenkins
   # slave node to install and register the node as a jenkins slave
   $jenkins_credentials_id = 'abcdef-0123-4567-89abcdef0123',
+  $project_config_repo = '',
   $http_proxy = '',
   $https_proxy = '',
   $no_proxy = '',
@@ -80,23 +81,57 @@ class os_ext_testing::master (
     }
   }
 
-  class { 'os_ext_testing::zuul':
-    vhost_name           => $zuul_host,
-    smtp_host            => $smtp_host,
-    gearman_server       => $gearman_server,
-    gerrit_server        => $upstream_gerrit_server,
-    gerrit_user          => $upstream_gerrit_user,
-    gerrit_baseurl       => $upstream_gerrit_baseurl,
-    gerrit_ssh_host_key => "${upstream_gerrit_ssh_host_key}",
-    zuul_ssh_private_key => $upstream_gerrit_ssh_private_key,
-    url_pattern          => $url_pattern,
-    zuul_url             => "http://$zuul_host/p/",
-    job_name_in_report   => true,
-    status_url           => "http://$zuul_host",
-    statsd_host          => $statsd_host,
-    git_email            => $git_email,
-    git_name             => $git_name,
-    layout_dir  => ["${data_repo_dir}/etc/zuul/",]
+  class { 'openstackci::zuul_merger':
+    vhost_name               => $zuul_host,
+    gearman_server           => $gearman_server,
+    gerrit_server            => $upstream_gerrit_server,
+    gerrit_user              => $upstream_gerrit_user,
+    known_hosts_content      => "", # Leave blank as it is set by openstackci::zuul_scheduler
+    zuul_ssh_private_key     => $upstream_gerrit_ssh_private_key,
+    zuul_url                 => "http://$zuul_host/p/",
+    git_email                => $git_email,
+    git_name                 => $git_name,
+    manage_common_zuul       => false,
+  }
+
+  class { 'openstackci::zuul_scheduler':
+    vhost_name                     => $zuul_host,
+    gearman_server                 => $gearman_server,
+    gerrit_server                  => $upstream_gerrit_server,
+    gerrit_user                    => $upstream_gerrit_user,
+    known_hosts_content            => $upstream_gerrit_ssh_host_key,
+    zuul_ssh_private_key           => $upstream_gerrit_ssh_private_key,
+    url_pattern                    => $url_pattern,
+    zuul_url                       => "http://$zuul_host/p/",
+    job_name_in_report             => true,
+    status_url                     => "http://$zuul_host",
+    swift_authurl                  => $swift_authurl,
+    swift_auth_version             => $swift_auth_version,
+    swift_user                     => $swift_user,
+    swift_key                      => $swift_key,
+    swift_tenant_name              => $swift_tenant_name,
+    swift_region_name              => $swift_region_name,
+    swift_default_container        => $swift_default_container,
+    swift_default_logserver_prefix => $swift_default_logserver_prefix,
+    swift_default_expiry           => $swift_default_expiry,
+    proxy_ssl_cert_file_contents   => $proxy_ssl_cert_file_contents,
+    proxy_ssl_key_file_contents    => $proxy_ssl_key_file_contents,
+    proxy_ssl_chain_file_contents  => $proxy_ssl_chain_file_contents,
+    statsd_host                    => $statsd_host,
+    project_config_repo            => $project_config_repo,
+    git_email                      => $git_email,
+    git_name                       => $git_name,
+  }
+
+  # We need to make sure the configuration is correct before reloading zuul,
+  # Otherwise the zuul process could get into a bad state that is difficult
+  # to debug
+  exec { 'zuul-check-reload':
+    command     => '/usr/local/bin/zuul-server -t',
+    logoutput   => on_failure,
+    require     => File['/etc/init.d/zuul'],
+    refreshonly => true,
+    notify      => Exec['zuul-reload'],
   }
 
 # TODO: Why use the Jenkins ssh_config also for zuul ?

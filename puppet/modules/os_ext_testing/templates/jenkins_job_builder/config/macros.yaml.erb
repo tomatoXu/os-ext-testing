@@ -94,7 +94,7 @@
     builders:
       - shell: |
           #!/bin/sh
-<% if upstream_gerrit_baseurl != "" -%>
+<% if @upstream_gerrit_baseurl != "" -%>
           echo "Triggered by: <%= @upstream_gerrit_baseurl %>/$ZUUL_CHANGE patchset $ZUUL_PATCHSET"
 <% else -%>
           echo "Triggered by: https://<%= @upstream_gerrit_server %>/$ZUUL_CHANGE patchset $ZUUL_PATCHSET"

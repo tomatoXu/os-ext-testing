@@ -15,6 +15,26 @@ running a variety of OpenStack integration tests easy.
 
 Currently only Puppet modules are complete and tested. 
 
+## NEW 7/1/2015: This repo is being migrated to use project-config and puppet-openstackci
+This 3rd party ci repo is in the process of being migrated to use the
+[common-ci approach] (http://specs.openstack.org/openstack-infra/infra-specs/specs/openstackci.html)
+
+As part of that, there will be a migration from the os-ext-testing-data config
+repo to use a repo following the structure of [project-config] (https://github.com/openstack-infra/project-config/).
+
+Fortunately, that task is simple:
+
+1. Create a new repo called e.g. project-config-ci-name
+
+2. mkdir zuul
+
+3. cp ~/os-ext-testing-data/etc/zuul/layout.yaml ~/project-config-ci-name/zuul/
+
+4. cp /etc/zuul/layout/openstack_functions.py  ~/project-config-ci-name/zuul/
+
+5. update os-ext-testing-data/vars.sh to include export PROJECT_CONFIG=http://your_git_url/project-config-ci-name.git
+
+
 
 ## Pre-requisites
 
